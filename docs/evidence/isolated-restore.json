@@ -1,0 +1,17 @@
+{
+  "completed": true,
+  "recorded_at": "2026-09-04T23:10:16.264Z",
+  "native_backup": true,
+  "checks": [
+    "native SQL restored into separate local D1",
+    "SQLite integrity and foreign keys valid",
+    "new external epoch enforced before opening",
+    "restored keys quarantined",
+    "old authority rejected",
+    "fresh claim and report succeeded"
+  ],
+  "counts": {
+    "tasks": 10061,
+    "attempts": 214
+  }
+}

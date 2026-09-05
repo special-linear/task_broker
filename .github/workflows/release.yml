@@ -1,0 +1,27 @@
+name: Package release
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: npm ci
+      - run: npm run check:privacy -- --history
+      - run: npm run test:publication
+      - run: npm run release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: task-broker-download
+          path: release/

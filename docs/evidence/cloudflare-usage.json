@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-09-04T22:46:33.422Z",
+  "since": "2026-09-04T16:46:33.422Z",
+  "worker_settings": {
+    "status": 200,
+    "result": {
+      "default_usage_model": "standard",
+      "green_compute": false
+    },
+    "success": true,
+    "errors": [],
+    "messages": []
+  },
+  "subscriptions": {
+    "status": 403,
+    "success": false,
+    "errors": [
+      {
+        "code": 10000,
+        "message": "Authentication error",
+        "documentation_url": "https://developers.cloudflare.com/api/resources/accounts/subresources/subscriptions/methods/get"
+      }
+    ],
+    "messages": [],
+    "result": null
+  },
+  "analytics": {
+    "data": {
+      "viewer": {
+        "accounts": [
+          {
+            "workersInvocationsAdaptive": [
+              {
+                "quantiles": {
+                  "cpuTimeP50": 4295,
+                  "cpuTimeP99": 11522
+                },
+                "sum": {
+                  "errors": 0,
+                  "requests": 832,
+                  "subrequests": 2
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "errors": null
+  }
+}

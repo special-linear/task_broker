@@ -1,0 +1,64 @@
+{
+  "name": "cloudflare-task-broker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "npm run build:web && wrangler dev --env local --ip 127.0.0.1 --port 8787",
+    "dev:web": "vite",
+    "build:web": "node scripts/browser-assets.mjs && vite build",
+    "build": "npm run typecheck && npm run api:generate && npm run build:web",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "test:python": "python -m unittest discover -s tests/python -v",
+    "db:local": "wrangler d1 migrations apply DB --local --env local",
+    "db:staging": "node scripts/wrangler.mjs d1 migrations apply DB --remote --env staging",
+    "deploy": "node scripts/wrangler.mjs d1 migrations apply DB --remote && node scripts/wrangler.mjs deploy",
+    "deploy:staging": "npm run build && npm run check:deployment -- --env staging && npm run db:staging && node scripts/wrangler.mjs deploy --env staging",
+    "api:generate": "tsx scripts/openapi.ts",
+    "check:deployment": "tsx scripts/deployment.ts",
+    "test:remote": "node scripts/remote-check.mjs",
+    "release": "npm run build && python scripts/package_release.py",
+    "check:privacy": "python scripts/publication_audit.py",
+    "test:publication": "python -m unittest discover -s tests/publication -v"
+  },
+  "dependencies": {
+    "jose": "6.2.11",
+    "lossless-json": "4.3.1",
+    "papaparse": "5.7.0",
+    "tabulator-tables": "6.5.2",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.22.0",
+    "@cloudflare/workers-types": "5.20260904.1",
+    "@playwright/test": "1.62.1",
+    "@types/node": "26.4.1",
+    "@types/papaparse": "5.5.2",
+    "@types/tabulator-tables": "6.3.6",
+    "jsonc-parser": "3.3.1",
+    "prettier": "3.9.6",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11",
+    "wrangler": "4.129.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "DB": {
+        "description": "Authoritative tasks, leases and history. Use a separate database per environment."
+      },
+      "APP_SIGNING_SECRET": {
+        "description": "Generate 32 random bytes. Never use the public INSTANCE_EPOCH as a secret."
+      },
+      "INSTANCE_EPOCH": {
+        "description": "Random recovery generation. Preserve on upgrades; rotate after restore."
+      }
+    }
+  }
+}

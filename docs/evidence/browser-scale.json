@@ -1,0 +1,16 @@
+{
+  "completed": true,
+  "recorded_at": "2026-09-04T23:27:47.955Z",
+  "environment": "local workerd/D1, Chromium",
+  "task_count": 10000,
+  "elapsed_ms": 22523,
+  "checks": [
+    "CSV parsed in browser worker",
+    "quoted multiline Unicode and exact large integers",
+    "complete server preview",
+    "lost committed chunk replayed with exact request bytes",
+    "10000 tasks without duplicates",
+    "complete browser CSV download",
+    "formula prefix and text fidelity"
+  ]
+}

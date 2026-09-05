@@ -1,0 +1,96 @@
+{
+  "recorded_at": "2026-09-04T23:22:14.499Z",
+  "environment": "remote D1",
+  "queries": {
+    "fresh_candidates": {
+      "sql": "SELECT t.task_uid FROM tasks t WHERE t.pool_id=? AND t.deleted_at IS NULL AND t.enabled=1 AND t.completed_at IS NULL AND NOT EXISTS(SELECT 1 FROM task_profile_state ps WHERE ps.task_uid=t.task_uid AND ps.profile_id=?) ORDER BY t.task_id COLLATE BINARY,t.task_uid LIMIT 20",
+      "parameter_count": 2,
+      "plan": [
+        {
+          "id": 5,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH t USING INDEX sqlite_autoindex_tasks_2 (pool_id=?)"
+        },
+        {
+          "id": 19,
+          "parent": 0,
+          "notused": 0,
+          "detail": "CORRELATED SCALAR SUBQUERY 1"
+        },
+        {
+          "id": 23,
+          "parent": 19,
+          "notused": 39,
+          "detail": "SEARCH ps USING COVERING INDEX sqlite_autoindex_task_profile_state_1 (task_uid=? AND profile_id=?)"
+        }
+      ]
+    },
+    "active_heads": {
+      "sql": "SELECT h.attempt_id FROM lease_heads h JOIN tasks t ON t.task_uid=h.task_uid AND t.latest_attempt_id=h.attempt_id AND t.lease_generation=h.lease_generation JOIN api_keys k ON k.id=h.issuing_key_id WHERE h.pool_id=? AND h.expires_at>? AND k.status!='hard_revoked'",
+      "parameter_count": 2,
+      "plan": [
+        {
+          "id": 8,
+          "parent": 0,
+          "notused": 50,
+          "detail": "SEARCH h USING INDEX heads_pool (pool_id=? AND expires_at>?)"
+        },
+        {
+          "id": 17,
+          "parent": 0,
+          "notused": 46,
+          "detail": "SEARCH t USING INDEX sqlite_autoindex_tasks_1 (task_uid=?)"
+        },
+        {
+          "id": 29,
+          "parent": 0,
+          "notused": 46,
+          "detail": "SEARCH k USING INDEX sqlite_autoindex_api_keys_1 (id=?)"
+        }
+      ]
+    },
+    "import_identity": {
+      "sql": "SELECT t.task_uid FROM task_identifiers ti JOIN tasks t ON t.task_uid=ti.task_uid WHERE ti.pool_id=? AND ti.public_id IN(SELECT value FROM json_each(?))",
+      "parameter_count": 2,
+      "plan": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH ti USING INDEX sqlite_autoindex_task_identifiers_1 (pool_id=? AND public_id=?)"
+        },
+        {
+          "id": 10,
+          "parent": 0,
+          "notused": 0,
+          "detail": "LIST SUBQUERY 1"
+        },
+        {
+          "id": 12,
+          "parent": 10,
+          "notused": 0,
+          "detail": "SCAN json_each VIRTUAL TABLE INDEX 1:"
+        },
+        {
+          "id": 32,
+          "parent": 0,
+          "notused": 44,
+          "detail": "SEARCH t USING COVERING INDEX sqlite_autoindex_tasks_1 (task_uid=?)"
+        }
+      ]
+    },
+    "pending_chunk": {
+      "sql": "SELECT ordinal,task_uid FROM admin_operation_items WHERE operation_id=? AND status='pending' ORDER BY ordinal LIMIT 50",
+      "parameter_count": 1,
+      "plan": [
+        {
+          "id": 5,
+          "parent": 0,
+          "notused": 61,
+          "detail": "SEARCH admin_operation_items USING INDEX operation_status (operation_id=? AND status=?)"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-09-05T00:07:30.582442+00:00",
+  "completed": true,
+  "worker_d1": {
+    "test_files": 4,
+    "passed": 30
+  },
+  "python_unittest": {
+    "passed": 6
+  },
+  "browser": {
+    "passed": 8,
+    "projects": [
+      "chromium",
+      "firefox"
+    ],
+    "checks": [
+      "create/edit/reload/report/export",
+      "two sessions and conflict preservation",
+      "committed-response loss with exact retry",
+      "reviewed rectangular paste",
+      "shared profile/filter/sort/columns/page-size view",
+      "editor/hidden-tab/15-minute inactivity polling gates using browser clock",
+      "hostile labels and cell text escaped"
+    ]
+  },
+  "typecheck": true,
+  "openapi_generated_routes": 65,
+  "openapi_drift_check": true,
+  "staging_configuration_check": true,
+  "python_parallel_evidence": "python-parallel.json",
+  "browser_scale_evidence": "browser-scale.json",
+  "limitations": [
+    "Browser inactivity uses controlled browser time; remote 30-minute idle is a separate observation.",
+    "Screen-reader review and fresh public-template installation require operator verification."
+  ],
+  "final_worker_suite_at": "2026-09-05T00:18:40Z",
+  "production_dependency_audit": "0 known vulnerabilities"
+}

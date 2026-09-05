@@ -1,0 +1,106 @@
+"""Publication boundary regressions, without using real secrets or user identities."""
+import json
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+import zipfile
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from publication_audit import audit_archive, audit_history, private_path, scan_content, source_manifest
+from package_release import collect_files
+
+
+class PublicationTests(unittest.TestCase):
+    def test_sensitive_content_is_reported_without_echoing_values(self):
+        values = [
+            "tb_" + "0" * 8 + "-" + "0" * 4 + "-" + "0" * 4 + "-" + "0" * 4 + "-" + "0" * 12 + "_" + "a" * 64,
+            "eyJ" + "a" * 24 + "." + "b" * 24 + "." + "c" * 24,
+            "person" + "@" + "mail.invalid",
+            "https://private-team." + "cloudflareaccess.com",
+            "C:" + chr(92) + "Users" + chr(92) + "private-person" + chr(92) + "project",
+        ]
+        for value in values:
+            with self.subTest(kind=value[:2]):
+                findings = scan_content("file.txt", value.encode())
+                self.assertTrue(findings)
+                self.assertNotIn(value, repr(findings))
+
+    def test_private_deny_list_catches_unstructured_secret(self):
+        value = "arbitrary" + "-private-value-12345"
+        self.assertTrue(scan_content("source.txt", value.encode(), [value]))
+
+    def test_templates_and_license_attribution_are_allowed(self):
+        self.assertFalse(scan_content("template.txt", b"owner@example.com https://YOUR-TEAM.cloudflareaccess.com"))
+        self.assertFalse(scan_content("notices/library/LICENSE", ("Copyright Author <author" + "@" + "mail.invalid>").encode()))
+
+    def test_deployment_ids_are_detected_without_private_deny_lists(self):
+        identifier = "f" * 32
+        self.assertTrue(scan_content("config.json", json.dumps({"account_id": identifier}).encode()))
+        self.assertFalse(scan_content("config.json", json.dumps({"account_id": "YOUR_ACCOUNT_ID"}).encode()))
+
+    def test_history_checks_old_blobs_and_annotated_tag_identity(self):
+        email = ("private-person" + "@" + "mail.invalid").encode()
+        def fake_git(*args):
+            if args[0] == "rev-list":
+                return b"current\nprevious\n"
+            if args[0] == "show":
+                return b"Project <contributors@example.invalid>"
+            if args[0] == "ls-tree":
+                return b"100644 blob " + args[-1].encode() + b"\tconfig.txt\0"
+            if args == ("cat-file", "blob", "current"):
+                return b"generic template"
+            if args == ("cat-file", "blob", "previous"):
+                return email
+            if args[0] == "for-each-ref":
+                return b"tag-id tag\n"
+            if args == ("cat-file", "tag", "tag-id"):
+                return b"tagger " + email
+            raise AssertionError(args)
+        with patch("publication_audit.git", side_effect=fake_git):
+            findings = audit_history()
+        self.assertTrue(any("previous" in name for name, _, _ in findings))
+        self.assertTrue(any("tag-id" in name for name, _, _ in findings))
+
+    def test_private_paths_and_traversal_are_rejected(self):
+        for path in ["wrangler.staging.local.jsonc", ".env.production", "artifacts/private/report.json", "artifacts/verification/result.json", "a/../../secret", ".git/config", "key.pem", "output.js.map"]:
+            self.assertTrue(private_path(path), path)
+        self.assertFalse(private_path(".dev.vars.example"))
+        self.assertFalse(private_path("migrations/0001_initial.sql"))
+
+    def test_ignored_root_files_do_not_enter_archive_without_git(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "release-files.json").write_text(json.dumps(["release-files.json", "package-lock.json"]))
+            (root / "package-lock.json").write_text('{"packages": {}}')
+            (root / "dist/web").mkdir(parents=True)
+            (root / "dist/web/index.html").write_text("<html></html>")
+            (root / "wrangler.staging.local.jsonc").write_text('{"secret":"should stay local"}')
+            (root / "unreviewed.json").write_text('{"value":"should stay local"}')
+            files = collect_files(root)
+            self.assertNotIn("wrangler.staging.local.jsonc", files)
+            self.assertNotIn("unreviewed.json", files)
+            (root / "dist/web/debug.log").write_text("private")
+            with self.assertRaises(ValueError):
+                collect_files(root)
+
+    def test_manifest_cannot_override_private_exclusion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "release-files.json").write_text('["wrangler.staging.local.jsonc"]')
+            (root / "wrangler.staging.local.jsonc").write_text("{}")
+            with self.assertRaises(ValueError):
+                source_manifest(root)
+
+    def test_zip_scan_rejects_hidden_private_file_and_binary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "candidate.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr(".env", "secret=value")
+                archive.writestr("screenshot.png", b"\x89PNG\x00")
+            self.assertEqual({hit[2] for hit in audit_archive(path)}, {"private-file", "unreviewed-binary"})
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,7393 @@
+{
+  "started_at": "2026-09-04T22:35:16.203Z",
+  "origin": "https://staging.example.test",
+  "requested_tasks": 10000,
+  "stages": {
+    "import": {
+      "requests": 603,
+      "p50_ms": 381.61,
+      "p95_ms": 587.07,
+      "p99_ms": 863.8,
+      "rows_read": 6741593,
+      "rows_written": 165400,
+      "max_statements": 26,
+      "sql_ms": 4043.7380000000003
+    },
+    "export": {
+      "requests": 102,
+      "p50_ms": 227.19,
+      "p95_ms": 272.6,
+      "p99_ms": 303.69,
+      "rows_read": 70930,
+      "rows_written": 40012,
+      "max_statements": 13,
+      "sql_ms": 417.1309999999999
+    },
+    "burst": {
+      "requests": 20,
+      "p50_ms": 633.11,
+      "p95_ms": 640.7,
+      "p99_ms": 645.39,
+      "rows_read": 10375,
+      "rows_written": 1380,
+      "max_statements": 24,
+      "sql_ms": 128.89400000000003
+    },
+    "steady": {
+      "requests": 60,
+      "p50_ms": 361,
+      "p95_ms": 520.02,
+      "p99_ms": 751.85,
+      "rows_read": 19850,
+      "rows_written": 6960,
+      "max_statements": 24,
+      "sql_ms": 395.99800000000005
+    },
+    "claims": {
+      "requests": 50,
+      "p50_ms": 391.53,
+      "p95_ms": 640.7,
+      "p99_ms": 751.85,
+      "rows_read": 23305,
+      "rows_written": 5970,
+      "max_statements": 24,
+      "sql_ms": 364.85200000000003
+    },
+    "reports": {
+      "requests": 50,
+      "p50_ms": 362.21,
+      "p95_ms": 447.63,
+      "p99_ms": 633.21,
+      "rows_read": 9200,
+      "rows_written": 3110,
+      "max_statements": 22,
+      "sql_ms": 260.548
+    }
+  },
+  "limitations": [
+    "CPU time is separate from HTTP wall time and D1 SQL time; retrieve Worker CPU from Cloudflare analytics.",
+    "Fixture is retained for history, idle and restore verification; revoke its key when those checks finish."
+  ],
+  "measurements": [
+    {
+      "path": "/me",
+      "status": 200,
+      "ms": 547.16,
+      "statements": 1,
+      "rows_read": 1,
+      "rows_written": 0,
+      "sql_ms": 0.385
+    },
+    {
+      "path": "/families",
+      "status": 200,
+      "ms": 253.07,
+      "statements": 12,
+      "rows_read": 11,
+      "rows_written": 16,
+      "sql_ms": 3.552
+    },
+    {
+      "path": "/pools",
+      "status": 200,
+      "ms": 301.53,
+      "statements": 18,
+      "rows_read": 21,
+      "rows_written": 34,
+      "sql_ms": 2.297
+    },
+    {
+      "path": "/keys",
+      "status": 200,
+      "ms": 175.42,
+      "statements": 12,
+      "rows_read": 12,
+      "rows_written": 15,
+      "sql_ms": 1.409
+    },
+    {
+      "path": "/imports/preview",
+      "status": 200,
+      "ms": 171.19,
+      "statements": 12,
+      "rows_read": 11,
+      "rows_written": 15,
+      "sql_ms": 1.66
+    },
+    {
+      "path": "/families",
+      "status": 200,
+      "ms": 169.62,
+      "statements": 12,
+      "rows_read": 11,
+      "rows_written": 16,
+      "sql_ms": 1.675
+    },
+    {
+      "path": "/profiles",
+      "status": 200,
+      "ms": 246.46,
+      "statements": 14,
+      "rows_read": 21,
+      "rows_written": 18,
+      "sql_ms": 2.201
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 442.2,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 6.109
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 215.21,
+      "statements": 3,
+      "rows_read": 2,
+      "rows_written": 0,
+      "sql_ms": 0.692
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 423.28,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.676
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 772.82,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.452
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 426.84,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.957
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 413.71,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.933
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 368.9,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.192
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 411.63,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 5.111
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 418.18,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.709
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 422.63,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.89
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 386.76,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.187
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 394.13,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.43
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.84,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.593
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 408.99,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.149
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.78,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.736
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.61,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.108
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 388.1,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.591
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 384.49,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.431
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 394.86,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.014
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 428.53,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.261
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.34,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.457
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 378.27,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.159
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 370.13,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.884
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.51,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.628
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.86,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.604
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 358.56,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.054
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.93,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.147
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 387.15,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.606
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 431.15,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.131
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.11,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.765
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 364.32,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.375
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 385.03,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.284
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 408.54,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.333
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 376.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 5.298
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.98,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.571
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.177
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.854
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 395.26,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.933
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 387.27,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.057
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 419.6,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.123
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 686.09,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.996
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.64,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.42
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 386.58,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.807
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.34,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.343
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.88,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.635
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.62,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.812
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.5,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.558
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.88,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.223
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 404.53,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.601
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 444.75,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.19
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 367.74,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.026
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 429.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.958
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 668.14,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.308
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.39,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.796
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 409.17,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.715
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.72,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.859
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.28,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 5.84
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 384.08,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.232
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 366.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.147
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 360.42,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.904
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 379.4,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.74
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 407.81,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.803
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 423.33,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.167
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.75,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.091
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.34,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.22
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 587.07,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.146
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.36,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.791
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 392.05,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.859
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 404.03,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.268
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 362.28,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.023
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.54,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.666
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 411.55,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.832
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 388.32,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.969
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 370.12,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.792
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.74,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.32
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 405.3,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.408
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 372.37,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.857
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 654.75,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.293
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.25,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.725
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 432.87,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.603
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.36,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.551
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 430.49,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.742
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 393.07,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.209
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 383.26,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.533
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.19,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.97
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 372.04,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.442
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.77,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.739
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.65,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.926
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 393.42,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.013
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 657.87,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.821
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.21,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.715
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 403.29,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.736
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 393.83,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.337
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.88,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.627
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.1,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.473
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.72,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.862
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.93,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.453
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 390.48,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.984
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 409.34,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.304
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.83,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 5.081
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 390.92,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.368
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 534.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.24
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 378.45,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.665
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 387.82,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.916
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 407.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.571
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 395.92,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.946
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 407.14,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.047
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 383.43,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.084
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 393.61,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.172
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.93,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.323
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 385.57,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.199
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.73,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.822
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.43,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.744
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.76,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.07
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 668.53,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.696
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.72,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.561
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 388.63,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.249
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 386.85,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.067
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.07,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.357
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 376.68,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.057
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.14,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.993
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 378.1,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.877
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 385.11,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.922
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 413.55,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.335
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.76,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.37
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 372.4,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.254
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 746.9,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.1
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.36,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.037
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.05,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.921
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 451.33,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.361
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 390.38,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.523
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 362.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.274
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.89,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.106
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 407.5,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.081
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 376.79,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.812
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 378.91,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.405
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 384,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.194
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.78,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.982
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 836.92,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.652
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 370.31,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.937
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 379.6,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.153
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 379.76,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.797
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 384.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.392
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 403.05,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.803
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 383.18,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.647
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.84,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.239
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 414.38,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.5
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.22,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.308
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 409.99,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.882
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 368.29,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.49
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 635.47,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.072
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.68,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.188
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.8,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.304
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 378.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.22
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.09,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.625
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 388.24,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.886
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 368.84,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.51
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 420.32,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.666
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.62,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.086
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 371.53,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.791
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.14,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.14
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 394.9,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.911
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 870.67,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.435
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.27,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.722
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.41,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.383
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 411.25,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.377
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 372.59,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.716
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 392.08,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.229
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 403.14,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.541
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 366.52,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.674
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 427.88,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.994
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.86,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.261
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 366.78,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.621
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 368.28,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.071
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 500.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.837
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.33,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.249
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 369.96,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.845
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.88,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.215
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 383.7,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.881
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.59,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.506
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 374.82,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.334
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 360.87,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.62
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 367.57,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.555
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.64,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.564
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.84,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.847
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 375.53,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.684
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 377.09,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.232
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 628.06,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.9
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 381.51,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.079
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 366.34,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 2.735
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 380.49,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.906
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 373.44,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.371
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 414.48,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.093
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 370.27,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.742
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 358.36,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.458
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 410.47,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.914
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 382.49,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.539
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 386.37,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.161
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 400.56,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.34
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 864.64,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 3.886
+    },
+    {
+      "path": "/imports/record-0008/preview-chunks",
+      "status": 200,
+      "ms": 370.62,
+      "statements": 15,
+      "rows_read": 122,
+      "rows_written": 211,
+      "sql_ms": 4.021
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.21,
+      "statements": 3,
+      "rows_read": 10101,
+      "rows_written": 0,
+      "sql_ms": 1.942
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 504.28,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.306
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 208.09,
+      "statements": 3,
+      "rows_read": 53,
+      "rows_written": 0,
+      "sql_ms": 1.047
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.42,
+      "statements": 3,
+      "rows_read": 10151,
+      "rows_written": 0,
+      "sql_ms": 2.13
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 559.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.35
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.49,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.735
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 574.34,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.204
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 219.4,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.815
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 559.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.524
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.66,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.877
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 544.34,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.159
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208.43,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.375
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 539.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.095
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.02,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.873
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 568.17,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.662
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.63,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.728
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 556.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 18.367
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.98,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.732
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 540.65,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.399
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208.98,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.295
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 514.22,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.838
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.4,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.838
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 503.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 22.028
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.05,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.841
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 852.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.693
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.04,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.755
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 515.74,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.002
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.8,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.202
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 507.85,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.848
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.47,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.877
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.01,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.781
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.726
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.56,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.264
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.35,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.576
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 545.98,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.64
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.05,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.906
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 718.64,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.075
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.14,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.664
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 517.3,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.633
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.94,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.99
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 507.13,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.799
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 221.66,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.898
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 550.39,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.17
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.39,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.838
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 596.41,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.073
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 201.87,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.636
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.83,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.65
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.81,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.123
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 546.36,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.773
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.4,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.703
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.89,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.747
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 201.04,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.897
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 535.83,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.392
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.04,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.028
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.23,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.061
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.14,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.592
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.01,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.135
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 220.49,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.303
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 552.07,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.902
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 238.96,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.898
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 536.84,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.285
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 219,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.866
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 569.52,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.856
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.88,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.885
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 922.19,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.662
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.65,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.786
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 548.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.848
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.14,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.312
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 537.07,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.689
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.39,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.558
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 535.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.308
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 197.74,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.684
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 524.88,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.199
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.04,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.669
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 507.28,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.565
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 218.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.29
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 540.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.491
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.46,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.107
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.02,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.41
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.56,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.051
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 569.37,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.625
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.16,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.785
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 533.63,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.131
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.3,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.349
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.095
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.83,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.937
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 509.56,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.248
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.89,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.262
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 533.78,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.86
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.53,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.398
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 505.26,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.498
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.232
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.51,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.776
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.23,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.644
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 537.51,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.493
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.079
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.52,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.107
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.92,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.869
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 551,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.735
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 201.13,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.003
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 549.65,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.149
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.6,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.065
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 859.71,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 19.23
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.95,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.641
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.32,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.479
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.83,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.915
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 510.93,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.369
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.51,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.118
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 543.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.397
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.072
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 525.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.873
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 197.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.222
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 507.07,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 18.764
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.45,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.896
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 504.02,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.909
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 215.75,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.606
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 535.27,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.151
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.46,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.748
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 522.54,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.793
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.259
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.58,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.44
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.7,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.085
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.91,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.386
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 192.35,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.235
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 504.01,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.968
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 203.79,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.049
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 504.4,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.969
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 254.67,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.839
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 513.47,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.823
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.41,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.799
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 569.85,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.604
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.23,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.121
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 514.58,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.573
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.7,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.245
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 510.73,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.638
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.46,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.029
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 503.01,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 17.914
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.11,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.796
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.02,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.266
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.41,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.002
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 499.22,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.517
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 196.84,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.777
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 516.48,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 26.481
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.19,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.744
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 508.24,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.011
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.6,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.919
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 498.19,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.577
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.6,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.387
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 508.48,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.71
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.32,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.829
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 498.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.135
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.77,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.398
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 530.36,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.249
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.42,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.084
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 573.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.044
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.87,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.106
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 639.78,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.221
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.44,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.107
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 553.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.439
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 196.02,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.045
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 514.46,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.23
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.7,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.987
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 521.92,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.238
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208.33,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.041
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 509.99,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.116
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 193.15,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.092
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 497.48,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.122
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.68,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.089
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 506.45,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.304
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.02,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.966
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 722.7,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.528
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.06,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.154
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 508.32,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 20.992
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.378
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 536.72,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.543
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.03,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.075
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 553.89,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.47
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.11,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.436
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 515.68,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.894
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.95,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.452
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 558.58,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.921
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.89,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.109
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 524.99,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.524
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.95,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.383
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 506.11,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.314
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.16,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.324
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 517.03,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.667
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.4,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.876
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 538.28,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.778
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 197.02,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.872
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.59,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.794
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 201.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.897
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 528.75,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 17.708
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 220.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.821
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 493.82,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.331
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.25,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.98
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 507.62,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.159
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 212.83,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.913
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.76,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.41
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.09,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.732
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 511.27,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.299
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.61,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.157
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 534.7,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 22.041
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.25,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.068
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.26,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.865
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208.87,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.95
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 503.8,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.808
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.57,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.908
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 567.97,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.606
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 292.86,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.791
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 810.38,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.204
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 201.26,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.712
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 567.67,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 24.261
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.57,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 3.235
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 513.05,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.543
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 203.17,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.811
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 499.64,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.288
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.41,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.975
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 497.28,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.709
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 266.84,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.564
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 527.49,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.137
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.73,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.96
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 514.49,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.894
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.1,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.057
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 644.84,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.866
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.59,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.07
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 545,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.132
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.19,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.319
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.74,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.547
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.83,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.889
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 510.25,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.42
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.84,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.098
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 555.43,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.051
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.043
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 501.93,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.102
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.66,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.669
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 1006.08,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.09
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.67,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.304
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.2,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.79
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208.96,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.841
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 523.04,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.981
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.77,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.532
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 513.38,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.28
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 215.36,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.762
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 509.33,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.832
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.24,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.167
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 526.33,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.695
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.21,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.682
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 505.83,
+      "statements": 26,
+      "rows_read": 23279,
+      "rows_written": 616,
+      "sql_ms": 9.572
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.35,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.671
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 608.37,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.599
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.2,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.944
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.01,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.128
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.29,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.911
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.59,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.05
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.7,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.179
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 559.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.838
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 215.55,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.415
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 515.48,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.589
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.75,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.047
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 585.11,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 20.851
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.92,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.089
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 785.65,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.419
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.07,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.993
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 532.32,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 20.862
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.22,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.092
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 515.68,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.064
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.162
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 543.62,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.077
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.92,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.41
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 548.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.069
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.67,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.99
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 560.1,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.423
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.81,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.28
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 766.34,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.356
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.56,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.069
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 559.38,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 18.311
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.52,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.841
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.56,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 17.297
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.68,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.869
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.8,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 21.597
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 195.57,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.43,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.87
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.11,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.227
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 515.16,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.033
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.22,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.418
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 568.41,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.832
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 203.56,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.858
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 648.51,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.292
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.24,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.774
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 534.94,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 25.014
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.79,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.999
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.8,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.491
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.36,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.024
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 546.78,
+      "statements": 26,
+      "rows_read": 23279,
+      "rows_written": 616,
+      "sql_ms": 14.346
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 195.76,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.384
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 584.19,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.782
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 209.58,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.864
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 517.71,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.675
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.83,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.771
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.86,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 19.035
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.11,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.777
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.69,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.535
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 203.3,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.673
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 546.22,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.766
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.48,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.651
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 536.44,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.496
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 210.81,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.092
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.3,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.679
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.136
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 545.04,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 22.727
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.11,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.474
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 521.24,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.978
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.115
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 863.8,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.209
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.236
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.68,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.497
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.2,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.556
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 521.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.428
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 216.02,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.114
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 535.57,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 20.997
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.908
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 513,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.382
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 218.27,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.872
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 579.65,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.067
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 300.15,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.627
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 874.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.704
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.77,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.726
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 539.05,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.579
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.19,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.352
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 530.87,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 21.552
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.68,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.963
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 558.47,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.652
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 254.63,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.035
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.399
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 197.51,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.938
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 525.8,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.152
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.06,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.812
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 546.25,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.853
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.27,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.928
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 514.43,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 22.656
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 195.34,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.831
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 536.31,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.079
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 203.04,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.845
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 523.3,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.836
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 215.07,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.869
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 543.53,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.89
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.89,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.693
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.94,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.066
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.92,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.381
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 543.23,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 22.287
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.61,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.273
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 1080.79,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.618
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 215.68,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.071
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 529.51,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.639
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 202.93,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.003
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 512.78,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.409
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 207.24,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.059
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 550.29,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.574
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 211.23,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.901
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 566.55,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.207
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 214.37,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.406
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 541.74,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.551
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 200.44,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.179
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 781.99,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.777
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.48,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.88
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 516.18,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.468
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.9,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.518
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 530.27,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.92
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 219.47,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.855
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 538.74,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 25.135
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.28,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.177
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 527.81,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.611
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 223.34,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.087
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 516.16,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 12.985
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 213.59,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.181
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 517.4,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.259
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 198.61,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.066
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.91,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 15.749
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 208,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.072
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 536.62,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 23.618
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 199.29,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.079
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 552.73,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.409
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 205.63,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.609
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.44,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 10.883
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 195.51,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.935
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 531.7,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.445
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 206.2,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.769
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 526.05,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 16.552
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 218.58,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.006
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.64,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 21.949
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.18,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.077
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 520.11,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 17.859
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 248.64,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.654
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 548.77,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 14.21
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 204.05,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.814
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 568.03,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 13.231
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 217.4,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 2.079
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 519.88,
+      "statements": 26,
+      "rows_read": 23335,
+      "rows_written": 616,
+      "sql_ms": 11.624
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 221.3,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.775
+    },
+    {
+      "path": "/imports/record-0008/chunks",
+      "status": 200,
+      "ms": 518.9,
+      "statements": 26,
+      "rows_read": 23334,
+      "rows_written": 616,
+      "sql_ms": 17.253
+    },
+    {
+      "path": "/operations/record-0008",
+      "status": 200,
+      "ms": 218.52,
+      "statements": 3,
+      "rows_read": 10201,
+      "rows_written": 0,
+      "sql_ms": 1.996
+    },
+    {
+      "path": "/exports",
+      "status": 200,
+      "ms": 403.87,
+      "statements": 13,
+      "rows_read": 40020,
+      "rows_written": 40012,
+      "sql_ms": 117.81
+    },
+    {
+      "path": "/exports/record-0009/pages?after=-1",
+      "status": 200,
+      "ms": 228.82,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.592
+    },
+    {
+      "path": "/exports/record-0009/pages?after=99",
+      "status": 200,
+      "ms": 272.6,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.966
+    },
+    {
+      "path": "/exports/record-0009/pages?after=199",
+      "status": 200,
+      "ms": 228.89,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.541
+    },
+    {
+      "path": "/exports/record-0009/pages?after=299",
+      "status": 200,
+      "ms": 245.92,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.068
+    },
+    {
+      "path": "/exports/record-0009/pages?after=399",
+      "status": 200,
+      "ms": 215.07,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.203
+    },
+    {
+      "path": "/exports/record-0009/pages?after=499",
+      "status": 200,
+      "ms": 218.93,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.532
+    },
+    {
+      "path": "/exports/record-0009/pages?after=599",
+      "status": 200,
+      "ms": 253.08,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 5.027
+    },
+    {
+      "path": "/exports/record-0009/pages?after=699",
+      "status": 200,
+      "ms": 227.91,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.307
+    },
+    {
+      "path": "/exports/record-0009/pages?after=799",
+      "status": 200,
+      "ms": 266.9,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.457
+    },
+    {
+      "path": "/exports/record-0009/pages?after=899",
+      "status": 200,
+      "ms": 267.54,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.666
+    },
+    {
+      "path": "/exports/record-0009/pages?after=999",
+      "status": 200,
+      "ms": 212.44,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.44
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1099",
+      "status": 200,
+      "ms": 245.8,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.574
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1199",
+      "status": 200,
+      "ms": 219.2,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.11
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1299",
+      "status": 200,
+      "ms": 218.28,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.146
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1399",
+      "status": 200,
+      "ms": 248.6,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.592
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1499",
+      "status": 200,
+      "ms": 212.49,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.091
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1599",
+      "status": 200,
+      "ms": 214.08,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.592
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1699",
+      "status": 200,
+      "ms": 206.51,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.501
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1799",
+      "status": 200,
+      "ms": 218.34,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.42
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1899",
+      "status": 200,
+      "ms": 224.68,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.953
+    },
+    {
+      "path": "/exports/record-0009/pages?after=1999",
+      "status": 200,
+      "ms": 228.63,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.629
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2099",
+      "status": 200,
+      "ms": 224.67,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.492
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2199",
+      "status": 200,
+      "ms": 228.83,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.519
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2299",
+      "status": 200,
+      "ms": 218.28,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.91
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2399",
+      "status": 200,
+      "ms": 261.7,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.653
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2499",
+      "status": 200,
+      "ms": 214.29,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.634
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2599",
+      "status": 200,
+      "ms": 223.5,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.621
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2699",
+      "status": 200,
+      "ms": 214.79,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.094
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2799",
+      "status": 200,
+      "ms": 215.26,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.476
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2899",
+      "status": 200,
+      "ms": 227.46,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.418
+    },
+    {
+      "path": "/exports/record-0009/pages?after=2999",
+      "status": 200,
+      "ms": 222.33,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.422
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3099",
+      "status": 200,
+      "ms": 283.92,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.755
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3199",
+      "status": 200,
+      "ms": 219.6,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.675
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3299",
+      "status": 200,
+      "ms": 303.69,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.844
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3399",
+      "status": 200,
+      "ms": 225.67,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.441
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3499",
+      "status": 200,
+      "ms": 226.06,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.485
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3599",
+      "status": 200,
+      "ms": 242.38,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 7.78
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3699",
+      "status": 200,
+      "ms": 225.87,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.046
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3799",
+      "status": 200,
+      "ms": 218.83,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.342
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3899",
+      "status": 200,
+      "ms": 271.25,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.027
+    },
+    {
+      "path": "/exports/record-0009/pages?after=3999",
+      "status": 200,
+      "ms": 253.04,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.153
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4099",
+      "status": 200,
+      "ms": 229.25,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.24
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4199",
+      "status": 200,
+      "ms": 233.51,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.717
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4299",
+      "status": 200,
+      "ms": 239.42,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.297
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4399",
+      "status": 200,
+      "ms": 231.55,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.1
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4499",
+      "status": 200,
+      "ms": 224.7,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.392
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4599",
+      "status": 200,
+      "ms": 213.21,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.253
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4699",
+      "status": 200,
+      "ms": 231.2,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.598
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4799",
+      "status": 200,
+      "ms": 226.91,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.44
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4899",
+      "status": 200,
+      "ms": 248.64,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.219
+    },
+    {
+      "path": "/exports/record-0009/pages?after=4999",
+      "status": 200,
+      "ms": 231.24,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.749
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5099",
+      "status": 200,
+      "ms": 233.39,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.004
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5199",
+      "status": 200,
+      "ms": 232.71,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.309
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5299",
+      "status": 200,
+      "ms": 206.02,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 4.145
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5399",
+      "status": 200,
+      "ms": 221.62,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.667
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5499",
+      "status": 200,
+      "ms": 232.58,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.876
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5599",
+      "status": 200,
+      "ms": 244.58,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 11.23
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5699",
+      "status": 200,
+      "ms": 221.47,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.6
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5799",
+      "status": 200,
+      "ms": 210.42,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.573
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5899",
+      "status": 200,
+      "ms": 231.5,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.736
+    },
+    {
+      "path": "/exports/record-0009/pages?after=5999",
+      "status": 200,
+      "ms": 228.6,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.452
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6099",
+      "status": 200,
+      "ms": 211.9,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.471
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6199",
+      "status": 200,
+      "ms": 219.24,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.396
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6299",
+      "status": 200,
+      "ms": 213.28,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.275
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6399",
+      "status": 200,
+      "ms": 256.41,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.513
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6499",
+      "status": 200,
+      "ms": 212.99,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.707
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6599",
+      "status": 200,
+      "ms": 228.99,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.979
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6699",
+      "status": 200,
+      "ms": 224.55,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.72
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6799",
+      "status": 200,
+      "ms": 221.85,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.844
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6899",
+      "status": 200,
+      "ms": 229.78,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.529
+    },
+    {
+      "path": "/exports/record-0009/pages?after=6999",
+      "status": 200,
+      "ms": 227.79,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.845
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7099",
+      "status": 200,
+      "ms": 225.72,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.953
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7199",
+      "status": 200,
+      "ms": 236.95,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.639
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7299",
+      "status": 200,
+      "ms": 288.42,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.773
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7399",
+      "status": 200,
+      "ms": 226.02,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.507
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7499",
+      "status": 200,
+      "ms": 228.52,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.971
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7599",
+      "status": 200,
+      "ms": 216.88,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.81
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7699",
+      "status": 200,
+      "ms": 275.46,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.952
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7799",
+      "status": 200,
+      "ms": 217.94,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.176
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7899",
+      "status": 200,
+      "ms": 228.69,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.828
+    },
+    {
+      "path": "/exports/record-0009/pages?after=7999",
+      "status": 200,
+      "ms": 235.65,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.865
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8099",
+      "status": 200,
+      "ms": 225.48,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.133
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8199",
+      "status": 200,
+      "ms": 229.66,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.852
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8299",
+      "status": 200,
+      "ms": 225.42,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.008
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8399",
+      "status": 200,
+      "ms": 236.82,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.258
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8499",
+      "status": 200,
+      "ms": 217.23,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.722
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8599",
+      "status": 200,
+      "ms": 230.61,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 1.997
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8699",
+      "status": 200,
+      "ms": 228.83,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.245
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8799",
+      "status": 200,
+      "ms": 218.85,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.147
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8899",
+      "status": 200,
+      "ms": 244.76,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.199
+    },
+    {
+      "path": "/exports/record-0009/pages?after=8999",
+      "status": 200,
+      "ms": 210.15,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.033
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9099",
+      "status": 200,
+      "ms": 203.19,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.596
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9199",
+      "status": 200,
+      "ms": 203.87,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 3.234
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9299",
+      "status": 200,
+      "ms": 219.37,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.692
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9399",
+      "status": 200,
+      "ms": 227.19,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.232
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9499",
+      "status": 200,
+      "ms": 222.18,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.811
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9599",
+      "status": 200,
+      "ms": 266.93,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.712
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9699",
+      "status": 200,
+      "ms": 246.04,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 11.552
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9799",
+      "status": 200,
+      "ms": 258.41,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.323
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9899",
+      "status": 200,
+      "ms": 210.68,
+      "statements": 3,
+      "rows_read": 309,
+      "rows_written": 0,
+      "sql_ms": 2.692
+    },
+    {
+      "path": "/exports/record-0009/pages?after=9999",
+      "status": 200,
+      "ms": 208.47,
+      "statements": 3,
+      "rows_read": 10,
+      "rows_written": 0,
+      "sql_ms": 1.339
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 391.53,
+      "statements": 24,
+      "rows_read": 257,
+      "rows_written": 69,
+      "sql_ms": 6.388
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 412.56,
+      "statements": 24,
+      "rows_read": 281,
+      "rows_written": 69,
+      "sql_ms": 5.398
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 438.46,
+      "statements": 24,
+      "rows_read": 309,
+      "rows_written": 69,
+      "sql_ms": 5.21
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 448.34,
+      "statements": 24,
+      "rows_read": 337,
+      "rows_written": 69,
+      "sql_ms": 5.861
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 462.85,
+      "statements": 24,
+      "rows_read": 365,
+      "rows_written": 69,
+      "sql_ms": 4.908
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 522.35,
+      "statements": 24,
+      "rows_read": 393,
+      "rows_written": 69,
+      "sql_ms": 7.168
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 529.07,
+      "statements": 24,
+      "rows_read": 421,
+      "rows_written": 69,
+      "sql_ms": 17.385
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 531.39,
+      "statements": 24,
+      "rows_read": 449,
+      "rows_written": 69,
+      "sql_ms": 6.631
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 632.08,
+      "statements": 24,
+      "rows_read": 468,
+      "rows_written": 69,
+      "sql_ms": 6.877
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 633.11,
+      "statements": 24,
+      "rows_read": 561,
+      "rows_written": 69,
+      "sql_ms": 5.171
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 634.61,
+      "statements": 24,
+      "rows_read": 673,
+      "rows_written": 69,
+      "sql_ms": 6.86
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 636.43,
+      "statements": 24,
+      "rows_read": 589,
+      "rows_written": 69,
+      "sql_ms": 6.253
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 636.58,
+      "statements": 24,
+      "rows_read": 701,
+      "rows_written": 69,
+      "sql_ms": 5.79
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 637.84,
+      "statements": 24,
+      "rows_read": 505,
+      "rows_written": 69,
+      "sql_ms": 6.009
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 637.85,
+      "statements": 24,
+      "rows_read": 729,
+      "rows_written": 69,
+      "sql_ms": 5.048
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 639.15,
+      "statements": 24,
+      "rows_read": 617,
+      "rows_written": 69,
+      "sql_ms": 6.215
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 639.24,
+      "statements": 24,
+      "rows_read": 757,
+      "rows_written": 69,
+      "sql_ms": 4.903
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 640.7,
+      "statements": 24,
+      "rows_read": 533,
+      "rows_written": 69,
+      "sql_ms": 5.045
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 640.39,
+      "statements": 24,
+      "rows_read": 645,
+      "rows_written": 69,
+      "sql_ms": 6.427
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 645.39,
+      "statements": 24,
+      "rows_read": 785,
+      "rows_written": 69,
+      "sql_ms": 5.347
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 367.82,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.494
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 357.62,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.733
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 348.19,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.533
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 346.36,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.725
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 423.01,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.935
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 349.77,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.769
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 348.5,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.311
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 373.53,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.596
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 349.66,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.582
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 353.64,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.272
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 349.9,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.602
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 352.05,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.611
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 357.6,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.506
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 353.96,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.213
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 362.8,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.626
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 337.05,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.484
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 341.22,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.283
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 353.38,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 4.763
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 633.21,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.66
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 352.9,
+      "statements": 22,
+      "rows_read": 114,
+      "rows_written": 37,
+      "sql_ms": 5.81
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 290.35,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.253
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 379.28,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.942
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 307.56,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.993
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 362.69,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.713
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 751.85,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.75
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 364.45,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.638
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 303.18,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.276
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 354.03,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.319
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 308.91,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 9.032
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 543.04,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.291
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 299.12,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.246
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 370.53,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 6.372
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 298.46,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.055
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 353.78,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.442
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 511.48,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.173
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 363.77,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.601
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 310.53,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 5.821
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 364.86,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.752
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 315.37,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.949
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 361.26,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.12
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 296.81,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.352
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 366.94,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.027
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 316.65,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 8.303
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 381.28,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 8.1
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 578.85,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.527
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 361,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.697
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 303.51,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 8.889
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 374.59,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.365
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 311.88,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 9.117
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 365.39,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.39
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 303.42,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.128
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 358.97,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.306
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 316.48,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 17.167
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 367.9,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.146
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 520.02,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 8.966
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 361.7,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.418
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 295.73,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.117
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 361.32,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.291
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 303.35,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 9.529
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 362.87,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.146
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 300.4,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.793
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 368.29,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.285
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 304.84,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.118
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 366.27,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.365
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 422.52,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.574
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 359.61,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.646
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 306.24,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.849
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 447.63,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 6.008
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 299.3,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.342
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 389.01,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 6.711
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 297.19,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 7.407
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 364.28,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 4.761
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 296.41,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.704
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 362.21,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.999
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 417.4,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 8.775
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 363.99,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.207
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 309.9,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 10.764
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 365.58,
+      "statements": 22,
+      "rows_read": 231,
+      "rows_written": 79,
+      "sql_ms": 5.021
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 305.73,
+      "statements": 24,
+      "rows_read": 431,
+      "rows_written": 153,
+      "sql_ms": 6.989
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 356.9,
+      "statements": 22,
+      "rows_read": 221,
+      "rows_written": 79,
+      "sql_ms": 5.961
+    }
+  ],
+  "completed": true,
+  "finished_at": "2026-09-04T22:40:45.539Z",
+  "total": {
+    "requests": 812,
+    "p50_ms": 371.36,
+    "p95_ms": 632.08,
+    "p99_ms": 852.18,
+    "rows_read": 6845116,
+    "rows_written": 214606,
+    "max_statements": 26,
+    "sql_ms": 5099.448000000001
+  }
+}

@@ -1,0 +1,41 @@
+name: Verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: npm ci
+      - run: npm run check:privacy -- --history
+      - run: npm run test:publication
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:python
+      - run: npm run api:generate -- --check
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium firefox
+      - run: npm run db:local
+      - name: Browser flows
+        run: |
+          npx wrangler dev --env local --ip 127.0.0.1 --port 8787 > /tmp/task-broker-dev.log 2>&1 &
+          for attempt in $(seq 1 60); do curl --fail --silent http://127.0.0.1:8787/healthz && break; sleep 1; done
+          npm run test:browser
+      - run: python scripts/package_release.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate
+          path: release/

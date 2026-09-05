@@ -1,0 +1,37 @@
+{
+  "origin": "https://staging.example.test",
+  "recorded_at": "2026-09-04T22:57:19.404Z",
+  "consistent": true,
+  "maintenance": true,
+  "sql_bytes": 37471974,
+  "sha256": "[private backup digest omitted]",
+  "before": {
+    "version": "0.1.0",
+    "schema_version": 3,
+    "config_revision": 1,
+    "setup_status": "ready",
+    "maintenance": false,
+    "epoch_matches": true,
+    "environment": "staging",
+    "admin_origin": "https://staging.example.test",
+    "broker_hostname": "staging.example.test",
+    "counts": {
+      "tasks": 10061,
+      "attempts": 213,
+      "active_leases": 0,
+      "receipts": 550
+    },
+    "estimated_bytes": 35401728,
+    "defaults": {
+      "lease_seconds": 7200,
+      "max_lifetime_seconds": 86400,
+      "claim_cap": 20,
+      "worker_profile_cap": 20,
+      "profile_cap": 100,
+      "family_cap": null,
+      "worker_family_cap": null,
+      "max_attempts": 10
+    },
+    "sampled_at": "2026-09-04T22:57:13.272Z"
+  }
+}

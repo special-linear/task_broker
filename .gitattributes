@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.png binary
+*.zip binary
+*.csv -text whitespace=cr-at-eol
+*.md whitespace=-blank-at-eol

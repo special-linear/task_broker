@@ -1,0 +1,49 @@
+// Optional production configuration after an explicit Workers Paid subscription decision.
+// This file does not change the account plan. Staging remains Free.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "task-broker",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-08-22",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist/web",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "task-broker",
+      "database_id": "",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ADMIN_ORIGIN": "https://tasks.example.com",
+    "BROKER_HOSTNAME": "broker.example.com",
+    "ACCESS_ISSUER": "https://YOUR-TEAM.cloudflareaccess.com",
+    "ACCESS_AUDIENCE": "REPLACE-ME",
+    "OWNER_EMAILS": "owner@example.com",
+    "LOG_QUERY_METRICS": "false"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  },
+  "ratelimits": [
+    {
+      "name": "ABUSE_LIMITER",
+      "namespace_id": "47892411",
+      "simple": {
+        "limit": 1200,
+        "period": 60
+      }
+    }
+  ],
+  "limits": {
+    "cpu_ms": 50
+  }
+}

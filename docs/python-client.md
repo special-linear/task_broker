@@ -1,0 +1,48 @@
+# Python client
+
+Copy `python/task_pool.py` into your program directory. Python 3.10+ uses only the standard library. The URL accepts either the broker origin or its `/api/v1` suffix. Use HTTPS except for loopback development. Explicit constructor arguments override environment values.
+
+```python
+from task_pool import TaskClient
+client = TaskClient.from_env("family/profile", worker_id="stable-job-name")
+tasks = client.claim(5, filter='n >= 32')
+for task in tasks:
+    try:
+        task.complete({"diameter": int(task.data["n"]) ** 2})
+    except Exception:
+        # An uncertain completion must be retried or recovered; do not replace
+        # it with a different outcome unless that change is deliberate.
+        raise
+```
+
+`TaskClient.from_env(pool, **overrides)` reads `TASK_MANAGER_URL` and `TASK_MANAGER_KEY`. Stable worker identity matters for recovery. Slurm job/array identity is used without a changing process ID; a caller-supplied worker ID is strongest. Outside Slurm the default includes hostname and PID, so pass an explicit ID if a restarted process must recover leases. Nonzero torchrun ranks are blocked from mutations unless explicitly allowed. See `examples/` for rank-zero coordination and independent serialized handles in a process pool.
+
+Task methods are `complete(result, runtime=None)`, `release(note=None, details=None)`, `fail(message, details=None)` and `renew(lease_seconds=7200)`. `recover()` returns this issuing key/worker/profile's active tasks, including original data and current expiry. There is no background heartbeat. Optional `poll()` backs off from 30 to 300 seconds and accepts a stop callback.
+
+Runtime is measured with a monotonic clock from receipt/recovery, not wall-clock timestamps. An explicit completion runtime overrides that measurement. Recovery marks the runtime origin as recovered.
+
+## Uncertain responses
+
+Every mutation has a UUID, creation timestamp and item IDs. Prepared bytes include the measured runtime. A retry after a timeout or lost response resends those same bytes, within a 15-second call timeout and 60-second retry budget. Changed content gets a new identity. Authentication, validation and quota errors are not retried in an unbounded loop. Busy responses and Retry-After are bounded.
+
+```python
+import json
+from task_pool import UncertainOperation
+
+try:
+    task.complete({"diameter": 49})
+except UncertainOperation as uncertain:
+    # Protect this file: a handle contains a task lease credential.
+    with open("private-pending.json", "w", encoding="utf-8") as handle:
+        json.dump(task.to_handle(), handle)
+    raise
+
+# After a process restart, with the same key/worker/profile:
+with open("private-pending.json", encoding="utf-8") as handle:
+    restored = client.task_from_handle(json.load(handle))
+restored.complete({"diameter": 49})  # unchanged pending request and runtime
+```
+
+`PendingOperation.to_dict()/from_dict()` and `client.retry(pending)` also expose explicit operation metadata. Task handles omit the family key but retain scoped lease credentials and pending mutations. Treat them as private. Never print them into shared logs or include them in portable scientific exports.
+
+Late success may be accepted after expiry only while the latest attempt, generation, input hash/revision, installation epoch and key permission still authorize it. Once another attempt or reset fences the old one, its result cannot become current. An identical terminal outcome is acknowledged without another state transition; a conflicting outcome is rejected.

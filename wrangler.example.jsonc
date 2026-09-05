@@ -1,0 +1,103 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "task-broker",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-08-22",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist/web",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "task-broker",
+      "database_id": "",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ADMIN_ORIGIN": "https://tasks.example.com",
+    "BROKER_HOSTNAME": "broker.example.com",
+    "ACCESS_ISSUER": "https://YOUR-TEAM.cloudflareaccess.com",
+    "ACCESS_AUDIENCE": "REPLACE-ME",
+    "OWNER_EMAILS": "owner@example.com",
+    "LOG_QUERY_METRICS": "false"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  },
+  "env": {
+    "local": {
+      "name": "task-broker-local",
+      "workers_dev": false,
+      "vars": {
+        "ENVIRONMENT": "local",
+        "DEV_AUTH": "true",
+        "ADMIN_ORIGIN": "http://127.0.0.1:8787",
+        "BROKER_HOSTNAME": "127.0.0.1",
+        "OWNER_EMAILS": "local@example.test",
+        "INSTANCE_EPOCH": "local-development-epoch",
+        "APP_SIGNING_SECRET": "local-only-non-production-signing-secret",
+        "ACCESS_ISSUER": "",
+        "ACCESS_AUDIENCE": "",
+        "LOG_QUERY_METRICS": "false"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "task-broker-local",
+          "database_id": "local",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "staging": {
+      "name": "task-manager-staging",
+      "account_id": "YOUR_ACCOUNT_ID",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ADMIN_ORIGIN": "https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev",
+        "BROKER_HOSTNAME": "YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev",
+        "ACCESS_ISSUER": "https://YOUR-TEAM.cloudflareaccess.com",
+        "ACCESS_AUDIENCE": "REPLACE-ME",
+        "OWNER_EMAILS": "owner@example.com",
+        "LOG_QUERY_METRICS": "true"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "task-manager-staging",
+          "database_id": "YOUR_STAGING_DATABASE_ID",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "ratelimits": [
+        {
+          "name": "ABUSE_LIMITER",
+          "namespace_id": "47892412",
+          "simple": {
+            "limit": 1200,
+            "period": 60
+          }
+        }
+      ]
+    }
+  },
+  "ratelimits": [
+    {
+      "name": "ABUSE_LIMITER",
+      "namespace_id": "47892411",
+      "simple": {
+        "limit": 1200,
+        "period": 60
+      }
+    }
+  ]
+}

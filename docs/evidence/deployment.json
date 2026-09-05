@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-09-05T00:20:14.628116+00:00",
+  "worker": "example-staging",
+  "version_id": "record-0001",
+  "schema_version": 3,
+  "admin_url": "https://staging.example.test/admin/",
+  "compute_base_url": "https://staging.example.test/api/v1/",
+  "workers_dev_staging_override": true,
+  "production_preview_access": false,
+  "access_protected_paths": [
+    "/admin/*",
+    "/admin-api/*"
+  ],
+  "compute_auth": "task-family keys",
+  "subscription_changed": false,
+  "limitations": [
+    "Public source repository URL and Deploy-button installation are pending.",
+    "Production domains, Time Travel cutover and screen-reader review are operator gates."
+  ]
+}

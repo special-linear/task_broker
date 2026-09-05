@@ -1,0 +1,14 @@
+{
+  "completed": true,
+  "recorded_at": "2026-09-05T00:20:16.981Z",
+  "origin": "https://staging.example.test",
+  "checks": [
+    "Access-protected browser-created demo",
+    "browser-downloaded dependency-free Python client",
+    "Python claim and report through public compute path",
+    "browser visible result 49",
+    "real CSV content",
+    "temporary key hard-revoked and demo archived"
+  ],
+  "page_errors": []
+}

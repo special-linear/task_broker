@@ -1,0 +1,342 @@
+{
+  "timestamp": "2026-09-05T00:20:12.158Z",
+  "origin": "https://staging.example.test",
+  "checks": [
+    "REMOTE-SETUP protected admin create/import",
+    "DB-02/DB-06 identical concurrent requests and discarded-response replay",
+    "DB-03 cross-body conflict",
+    "DB-01 20 deployed concurrent clients, unique active grants",
+    "LEASE-09 mixed report and lost-response replay",
+    "LEASE-10 recovery",
+    "LEASE-01 persistent result and immutable history",
+    "LEASE-06 reset/report serialization",
+    "UI-05/DB-05 edit/claim serialization and rejected edit rollback",
+    "UI-10 frozen export contains all 60 rows",
+    "AUTH-01/02 edge coverage, forged identity, compute path independence",
+    "AUTH-05 hard revocation blocks receipt replay"
+  ],
+  "requests": 51,
+  "latency_ms": {
+    "p50": 429.78,
+    "p95": 596.14,
+    "p99": 624.12
+  },
+  "timings": [
+    {
+      "path": "/me",
+      "ms": 365.51,
+      "status": 200,
+      "server_timing": "d1;dur=0.106, queries;desc=\"1\", reads;desc=\"1\", writes;desc=\"0\", parameters;desc=\"1\", storage;desc=\"40562688\""
+    },
+    {
+      "path": "/families",
+      "ms": 170.18,
+      "status": 200,
+      "server_timing": "d1;dur=1.851, queries;desc=\"9\", reads;desc=\"8\", writes;desc=\"13\", parameters;desc=\"10\", storage;desc=\"40562688\""
+    },
+    {
+      "path": "/pools",
+      "ms": 292.68,
+      "status": 200,
+      "server_timing": "d1;dur=2.220, queries;desc=\"15\", reads;desc=\"14\", writes;desc=\"25\", parameters;desc=\"10\", storage;desc=\"40570880\""
+    },
+    {
+      "path": "/keys",
+      "ms": 153.19,
+      "status": 200,
+      "server_timing": "d1;dur=0.987, queries;desc=\"9\", reads;desc=\"9\", writes;desc=\"12\", parameters;desc=\"10\", storage;desc=\"40570880\""
+    },
+    {
+      "path": "/imports/preview",
+      "ms": 482.52,
+      "status": 200,
+      "server_timing": "d1;dur=1.513, queries;desc=\"9\", reads;desc=\"8\", writes;desc=\"12\", parameters;desc=\"10\", storage;desc=\"40570880\""
+    },
+    {
+      "path": "/imports/record-0012/preview-chunks",
+      "ms": 368.14,
+      "status": 200,
+      "server_timing": "d1;dur=3.385, queries;desc=\"13\", reads;desc=\"117\", writes;desc=\"209\", parameters;desc=\"10\", storage;desc=\"40595456\""
+    },
+    {
+      "path": "/imports/record-0012/preview-chunks",
+      "ms": 337.44,
+      "status": 200,
+      "server_timing": "d1;dur=2.032, queries;desc=\"13\", reads;desc=\"37\", writes;desc=\"49\", parameters;desc=\"10\", storage;desc=\"40603648\""
+    },
+    {
+      "path": "/imports/record-0012/chunks",
+      "ms": 501.96,
+      "status": 200,
+      "server_timing": "d1;dur=8.333, queries;desc=\"24\", reads;desc=\"3553\", writes;desc=\"614\", parameters;desc=\"10\", storage;desc=\"40660992\""
+    },
+    {
+      "path": "/imports/record-0012/chunks",
+      "ms": 476.25,
+      "status": 200,
+      "server_timing": "d1;dur=3.961, queries;desc=\"24\", reads;desc=\"433\", writes;desc=\"134\", parameters;desc=\"10\", storage;desc=\"40669184\""
+    },
+    {
+      "path": "/claim",
+      "ms": 290.18,
+      "status": 200,
+      "server_timing": "d1;dur=9.177, queries;desc=\"21\", reads;desc=\"279\", writes;desc=\"66\", parameters;desc=\"19\", storage;desc=\"40681472\""
+    },
+    {
+      "path": "/claim",
+      "ms": 439.08,
+      "status": 200,
+      "server_timing": "d1;dur=1.047, queries;desc=\"5\", reads;desc=\"20\", writes;desc=\"0\", parameters;desc=\"8\", storage;desc=\"40681472\""
+    },
+    {
+      "path": "/claim",
+      "ms": 493.72,
+      "status": 200,
+      "server_timing": "d1;dur=1.627, queries;desc=\"24\", reads;desc=\"20\", writes;desc=\"0\", parameters;desc=\"19\", storage;desc=\"40681472\""
+    },
+    {
+      "path": "/claim",
+      "ms": 494.34,
+      "status": 200,
+      "server_timing": "d1;dur=1.379, queries;desc=\"24\", reads;desc=\"20\", writes;desc=\"0\", parameters;desc=\"19\", storage;desc=\"40681472\""
+    },
+    {
+      "path": "/claim",
+      "ms": 496.08,
+      "status": 200,
+      "server_timing": "d1;dur=1.180, queries;desc=\"24\", reads;desc=\"20\", writes;desc=\"0\", parameters;desc=\"19\", storage;desc=\"40681472\""
+    },
+    {
+      "path": "/claim",
+      "ms": 199.73,
+      "status": 409,
+      "server_timing": null
+    },
+    {
+      "path": "/claim",
+      "ms": 380.33,
+      "status": 200,
+      "server_timing": "d1;dur=6.193, queries;desc=\"21\", reads;desc=\"247\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40701952\""
+    },
+    {
+      "path": "/claim",
+      "ms": 428.9,
+      "status": 200,
+      "server_timing": "d1;dur=5.146, queries;desc=\"21\", reads;desc=\"275\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40701952\""
+    },
+    {
+      "path": "/claim",
+      "ms": 429.78,
+      "status": 200,
+      "server_timing": "d1;dur=5.245, queries;desc=\"21\", reads;desc=\"261\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40701952\""
+    },
+    {
+      "path": "/claim",
+      "ms": 432.09,
+      "status": 200,
+      "server_timing": "d1;dur=4.219, queries;desc=\"21\", reads;desc=\"289\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40706048\""
+    },
+    {
+      "path": "/claim",
+      "ms": 432.55,
+      "status": 200,
+      "server_timing": "d1;dur=4.078, queries;desc=\"21\", reads;desc=\"303\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40718336\""
+    },
+    {
+      "path": "/claim",
+      "ms": 436.46,
+      "status": 200,
+      "server_timing": "d1;dur=5.117, queries;desc=\"21\", reads;desc=\"317\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40730624\""
+    },
+    {
+      "path": "/claim",
+      "ms": 459.95,
+      "status": 200,
+      "server_timing": "d1;dur=4.327, queries;desc=\"21\", reads;desc=\"331\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40734720\""
+    },
+    {
+      "path": "/claim",
+      "ms": 468.81,
+      "status": 200,
+      "server_timing": "d1;dur=6.107, queries;desc=\"21\", reads;desc=\"345\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40734720\""
+    },
+    {
+      "path": "/claim",
+      "ms": 494.47,
+      "status": 200,
+      "server_timing": "d1;dur=4.388, queries;desc=\"21\", reads;desc=\"359\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40738816\""
+    },
+    {
+      "path": "/claim",
+      "ms": 510.09,
+      "status": 200,
+      "server_timing": "d1;dur=4.164, queries;desc=\"21\", reads;desc=\"387\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40747008\""
+    },
+    {
+      "path": "/claim",
+      "ms": 512.08,
+      "status": 200,
+      "server_timing": "d1;dur=4.591, queries;desc=\"21\", reads;desc=\"373\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40747008\""
+    },
+    {
+      "path": "/claim",
+      "ms": 515.22,
+      "status": 200,
+      "server_timing": "d1;dur=4.208, queries;desc=\"21\", reads;desc=\"401\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40747008\""
+    },
+    {
+      "path": "/claim",
+      "ms": 558.49,
+      "status": 200,
+      "server_timing": "d1;dur=4.373, queries;desc=\"21\", reads;desc=\"415\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40755200\""
+    },
+    {
+      "path": "/claim",
+      "ms": 561.42,
+      "status": 200,
+      "server_timing": "d1;dur=6.036, queries;desc=\"21\", reads;desc=\"429\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40755200\""
+    },
+    {
+      "path": "/claim",
+      "ms": 561.2,
+      "status": 200,
+      "server_timing": "d1;dur=4.196, queries;desc=\"21\", reads;desc=\"443\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40759296\""
+    },
+    {
+      "path": "/claim",
+      "ms": 566.64,
+      "status": 200,
+      "server_timing": "d1;dur=5.376, queries;desc=\"21\", reads;desc=\"457\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40763392\""
+    },
+    {
+      "path": "/claim",
+      "ms": 586,
+      "status": 200,
+      "server_timing": "d1;dur=4.732, queries;desc=\"21\", reads;desc=\"471\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40767488\""
+    },
+    {
+      "path": "/claim",
+      "ms": 596.14,
+      "status": 200,
+      "server_timing": "d1;dur=4.370, queries;desc=\"21\", reads;desc=\"485\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40767488\""
+    },
+    {
+      "path": "/claim",
+      "ms": 608.5,
+      "status": 200,
+      "server_timing": "d1;dur=4.036, queries;desc=\"21\", reads;desc=\"499\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40771584\""
+    },
+    {
+      "path": "/claim",
+      "ms": 624.12,
+      "status": 200,
+      "server_timing": "d1;dur=4.014, queries;desc=\"21\", reads;desc=\"513\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40779776\""
+    },
+    {
+      "path": "/report",
+      "ms": 353.93,
+      "status": 200,
+      "server_timing": "d1;dur=4.788, queries;desc=\"19\", reads;desc=\"83\", writes;desc=\"25\", parameters;desc=\"10\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/report",
+      "ms": 333.11,
+      "status": 200,
+      "server_timing": "d1;dur=1.401, queries;desc=\"5\", reads;desc=\"21\", writes;desc=\"0\", parameters;desc=\"8\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/recover",
+      "ms": 205.77,
+      "status": 200,
+      "server_timing": "d1;dur=1.347, queries;desc=\"3\", reads;desc=\"17\", writes;desc=\"0\", parameters;desc=\"8\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/pools/record-0013/tasks",
+      "ms": 290.21,
+      "status": 200,
+      "server_timing": "d1;dur=2.591, queries;desc=\"4\", reads;desc=\"443\", writes;desc=\"0\", parameters;desc=\"1\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/tasks/record-0014/attempts",
+      "ms": 146.1,
+      "status": 200,
+      "server_timing": "d1;dur=0.569, queries;desc=\"2\", reads;desc=\"4\", writes;desc=\"0\", parameters;desc=\"1\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/tasks/bulk/preview",
+      "ms": 221.3,
+      "status": 200,
+      "server_timing": "d1;dur=2.303, queries;desc=\"12\", reads;desc=\"82\", writes;desc=\"17\", parameters;desc=\"10\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/report",
+      "ms": 354.98,
+      "status": 200,
+      "server_timing": "d1;dur=4.048, queries;desc=\"19\", reads;desc=\"72\", writes;desc=\"20\", parameters;desc=\"10\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/operations/record-0015/apply",
+      "ms": 492.01,
+      "status": 200,
+      "server_timing": "d1;dur=9.194, queries;desc=\"31\", reads;desc=\"11260\", writes;desc=\"20\", parameters;desc=\"10\", storage;desc=\"40783872\""
+    },
+    {
+      "path": "/claim",
+      "ms": 282.99,
+      "status": 200,
+      "server_timing": "d1;dur=5.825, queries;desc=\"21\", reads;desc=\"418\", writes;desc=\"38\", parameters;desc=\"19\", storage;desc=\"40792064\""
+    },
+    {
+      "path": "/tasks/record-0016",
+      "ms": 342.81,
+      "status": 409,
+      "server_timing": null
+    },
+    {
+      "path": "/exports",
+      "ms": 217.85,
+      "status": 200,
+      "server_timing": "d1;dur=2.007, queries;desc=\"11\", reads;desc=\"256\", writes;desc=\"250\", parameters;desc=\"10\", storage;desc=\"40816640\""
+    },
+    {
+      "path": "/exports/record-0017/pages",
+      "ms": 214.15,
+      "status": 200,
+      "server_timing": "d1;dur=2.493, queries;desc=\"3\", reads;desc=\"359\", writes;desc=\"0\", parameters;desc=\"3\", storage;desc=\"40816640\""
+    },
+    {
+      "path": "/keys/record-0018/hard-revoke",
+      "ms": 215.05,
+      "status": 200,
+      "server_timing": "d1;dur=1.457, queries;desc=\"10\", reads;desc=\"10\", writes;desc=\"11\", parameters;desc=\"10\", storage;desc=\"40816640\""
+    },
+    {
+      "path": "/claim",
+      "ms": 75.71,
+      "status": 403,
+      "server_timing": null
+    },
+    {
+      "path": "/pools/record-0013",
+      "ms": 81.26,
+      "status": 200,
+      "server_timing": "d1;dur=0.234, queries;desc=\"1\", reads;desc=\"1\", writes;desc=\"0\", parameters;desc=\"1\", storage;desc=\"40816640\""
+    },
+    {
+      "path": "/pools/record-0013",
+      "ms": 213.24,
+      "status": 200,
+      "server_timing": "d1;dur=1.477, queries;desc=\"11\", reads;desc=\"12\", writes;desc=\"12\", parameters;desc=\"10\", storage;desc=\"40816640\""
+    }
+  ],
+  "limitations": [
+    "Smoke and burst results; separate 10,000-row and steady/idle performance gates still required.",
+    "Worker CPU requires Cloudflare metrics; HTTP wall time is not CPU."
+  ],
+  "fixture": {
+    "family": "record-0019",
+    "pool": "record-0013",
+    "archived": true,
+    "key_revoked": true
+  }
+}

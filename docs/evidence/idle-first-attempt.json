@@ -1,0 +1,9 @@
+{
+  "completed": false,
+  "start": "2026-09-04T23:00:31.521Z",
+  "duration_ms": 1800000,
+  "failure": "Provider confirmed D1 Free daily read allowance exceeded on recovery",
+  "provider_message": "Your account has exceeded D1's free tier daily row read limit.",
+  "control_plane_reads_during_interval": "Four EXPLAIN plans at 23:22 UTC; no verifier Worker traffic during 30-minute interval.",
+  "action": "Classify quotas for reads and writes; repeat through midnight UTC quota reset."
+}

@@ -1,0 +1,10 @@
+{
+  "completed": true,
+  "recorded_at": "2026-09-04T23:58:40.760Z",
+  "environment": "local Worker and D1 with real Python subprocesses",
+  "checks": [
+    "four independent serialized handles",
+    "ProcessPoolExecutor child processes report their own results",
+    "all four exact result values verified"
+  ]
+}

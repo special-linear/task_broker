@@ -1,0 +1,64 @@
+{
+  "completed": true,
+  "origin": "https://staging.example.test",
+  "start": "2026-09-04T23:37:18.703Z",
+  "end": "2026-09-05T00:07:20.346Z",
+  "duration_ms": 1800000,
+  "quota_reset_observation": true,
+  "checks": [
+    "30 minutes without verifier application requests",
+    "existing lease/data recovered",
+    "fresh work claimed without initialization or scheduled job"
+  ],
+  "measurements": [
+    {
+      "path": "/recover",
+      "status": 200,
+      "ms": 582.42,
+      "statements": 3,
+      "rows_read": 17,
+      "rows_written": 0,
+      "sql_ms": 1.183
+    },
+    {
+      "path": "/claim",
+      "status": 200,
+      "ms": 332.06,
+      "statements": 21,
+      "rows_read": 145,
+      "rows_written": 38,
+      "sql_ms": 5.648
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 361.44,
+      "statements": 19,
+      "rows_read": 71,
+      "rows_written": 18,
+      "sql_ms": 3.901
+    },
+    {
+      "path": "/report",
+      "status": 200,
+      "ms": 355.78,
+      "statements": 19,
+      "rows_read": 71,
+      "rows_written": 18,
+      "sql_ms": 4.084
+    }
+  ],
+  "summary": {
+    "requests": 4,
+    "p50_ms": 355.78,
+    "p95_ms": 582.42,
+    "p99_ms": 582.42,
+    "rows_read": 304,
+    "rows_written": 74,
+    "max_statements": 21,
+    "sql_ms": 14.815999999999999
+  },
+  "passive_tail_events_during_interval": 1,
+  "passive_tail_scope": "The ending recovery request has a Cloudflare timestamp 480 ms before the local timer boundary. Server timestamps show the actual request-free gap exceeded 30 minutes; no intervening request appeared. This is not account-wide D1 usage accounting.",
+  "passive_tail_server_clock_gap_ms": 1805282
+}

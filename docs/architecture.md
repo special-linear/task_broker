@@ -1,0 +1,25 @@
+# Architecture and invariants
+
+`src/shared` owns limits, lossless normalization, field/result contracts, filter AST and the typed endpoint registry. `src/worker/index.ts` enforces host/path routing before authentication or asset fallback. Native handlers dispatch into domain modules; `db.ts` prepares statements and receipt batches. Domain services construct complete batches, with no interactive transaction simulation or hidden repository writes. `src/web` owns rows, drafts, selection and operation state; Tabulator is isolated in `grid.ts`. The Python module has no Cloudflare SDK dependency.
+
+## Atomic state
+
+D1 `batch()` executes statements transactionally and rolls the whole batch back on a failing constraint. Every mutation strictly inserts an actor-wide receipt first, records database time, and checks epoch, maintenance and current authorization with named CHECK guards. Duplicate insertion loses atomically; it reads and compares the committed receipt before replay. Revisions guard configuration snapshots prepared outside D1. Quota/busy errors never weaken the transaction.
+
+The authoritative task state is its latest-attempt pointer, lease generation and immutable attempt contract. `lease_heads` is a narrow transactional projection used for capacity checks. An effective head must match task pointer/generation, an unrevoked key, a ready pool, current epoch and an unexpired timestamp. Every transition updates the head with the task/attempt state. Expired rows require no cleanup for correctness. Hard key revocation invalidates heads immediately through this predicate, without updating every leased task.
+
+A claim computes remaining worker/profile, profile, physical pool, worker/family and family capacity in its batch. Family-wide limits come from family/global configuration, so one profile cannot bypass them. Selection prioritizes never-attempted tasks, then oldest grant, then public/physical ID. Indexed branches select bounded IDs before reading task bodies. Tokens, attempt IDs, filters and contracts are prepared outside the transaction. Ordered JSON arrays stage bounded items; response sizing occurs before grants. Success snapshots are immutable, including the initial expiry used by claim replay.
+
+Reports/renewals validate the envelope separately from individual items. A decision stage records every ordered item, including malformed or stale items, before applying accepted transitions. The first accepted terminal outcome wins. Lease-level outcome hashes survive receipt pruning. Original payload snapshots and complete issued field/projection/result contracts are retained. Results live in a separate immutable-body table. Imported historical results use `legacy_imports`, not fictitious worker attempts.
+
+Edit, input and runtime state revisions are independent. Input normalization/hash calculation occurs outside D1; the batch rechecks expected revisions, generation, pool schema and lease/completion state. Revoke-and-edit and reset-and-edit are single batches. Reviewed bulk operations freeze task IDs and revisions, so they cannot revoke a replacement lease. Immutable schema versions support optional updates and resumable conversion. The migration barrier prevents claims/reports/payload edits while bounded chunks retain old inputs and establish the new contract.
+
+## Budgets and observability
+
+`metrics.ts` wraps each request's D1 binding independently. It counts every prepared-statement invocation, including authentication, configuration and failed attempts. The application reserves one query below the Free ceiling of 50, and every statement enforces the 100-parameter bound. Mutation batches additionally enforce at most 40 statements. A guarded claim retries a configuration race only when enough invocation budget remains; otherwise the caller receives a retryable conflict/busy response and retains the same request identity.
+
+Sampled logs contain route, request ID, statement/parameter counts, D1 SQL duration, rows read/written and database size. They contain no request bodies, results, family secrets or lease tokens. Staging exposes equivalent `Server-Timing` metadata. These are **D1 and wall-time measurements, not Worker CPU**. Retrieve CPU separately from Cloudflare analytics. No database metric row is written on each request.
+
+Receipt retention is monotonic and at least max(48 hours, maximum configured lease lifetime + 24 hours). The installation keeps a conservative high-water mark. Cleanup deletes bounded transient receipts/preview items; task identities, tombstones, inputs, attempts, results and audit history are permanent.
+
+Provider references: [transactional D1 batch API](https://developers.cloudflare.com/d1/worker-api/d1-database/#batch), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [Workers rate-limit binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/). Cloudflare's abuse limiter is per location and is not used for correctness-critical lease capacity.
