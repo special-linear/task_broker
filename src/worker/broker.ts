@@ -166,18 +166,20 @@ export async function claim(c: Context): Promise<unknown> {
         )
       : "ch.task_id COLLATE BINARY,ch.task_uid";
     // Filter placeholders are numbered first. Other values are fixed trusted literals or JSON binds.
+    // Freshness uses attempts since the profile's last full reset. Lifetime counters
+    // remain monotonic for history and identity, and must not demote reset tasks.
     r.statements.push(
       stmt(
         db,
         `WITH fresh AS MATERIALIZED (
       SELECT t.task_uid,t.task_id,0 priority,NULL last_grant_at,COALESCE(ps.attempts,0) profile_attempts${sortColumns}
       FROM tasks t ${sorts.length ? "" : "INDEXED BY tasks_schedule"} ${scopeJoins} LEFT JOIN task_profile_state ps ON ps.task_uid=t.task_uid AND ps.profile_id=p.id
-      WHERE COALESCE(ps.lifetime_attempts,0)=0 AND ${eligibility}
+      WHERE COALESCE(ps.attempts,0)=0 AND ${eligibility}
       ORDER BY ${customOrder} LIMIT ${grantLimit}
     ), retried AS MATERIALIZED (
       SELECT t.task_uid,t.task_id,1 priority,ps.last_grant_at,ps.attempts profile_attempts${sortColumns}
       FROM task_profile_state ps INDEXED BY profile_schedule JOIN tasks t ON t.task_uid=ps.task_uid ${scopeJoins}
-      WHERE ps.profile_id=${sqlString(profile.id)} AND ps.permanent_failure=0 AND ps.lifetime_attempts>0 AND ${eligibility}
+      WHERE ps.profile_id=${sqlString(profile.id)} AND ps.permanent_failure=0 AND ps.attempts>0 AND ${eligibility}
       ORDER BY ps.last_grant_at,${customOrder} LIMIT max(0,${grantLimit}-(SELECT COUNT(*) FROM fresh))
     ), chosen AS MATERIALIZED (SELECT * FROM fresh UNION ALL SELECT * FROM retried),
     candidates AS (SELECT t.*,ch.profile_attempts,${projection} returned_data,row_number() OVER(ORDER BY ch.priority,ch.last_grant_at,${chosenOrder})-1 ordinal FROM chosen ch JOIN tasks t ON t.task_uid=ch.task_uid),

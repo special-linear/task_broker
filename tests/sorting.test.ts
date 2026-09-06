@@ -63,7 +63,7 @@ async function fixture(data: Record<string, unknown>[] = []) {
       data: row,
     });
   const fields = (await ok(`/pools/${pool.id}/fields`)).fields as Field[];
-  return { pool: pool.id, profile: pool.profile_id, key: key.key, slug, fields };
+  return { family: family.id, pool: pool.id, profile: pool.profile_id, key: key.key, slug, fields };
 }
 async function pages(pool: string, sorts: SortSpec, limit = 2) {
   const rows: any[] = [];
@@ -245,6 +245,173 @@ test("ordered claims preserve fresh and retry-age priority, replay and allowlist
       .error.code,
   ).toBe("FORBIDDEN");
 });
+
+test.each([false, true])(
+  "full reset returns the first five tasks to their two-column claim order (indexed: %s)",
+  async (indexed) => {
+    const f = await fixture([
+      { a: "3", b: 1 },
+      ...Array.from({ length: 7 }, (_, i) => ({ a: "2", b: 8 - i })),
+    ]);
+    const sorts: SortSpec = [
+      { field: "a", direction: "asc" },
+      { field: "b", direction: "asc" },
+    ];
+    if (indexed) {
+      const index = await ok(`/pools/${f.pool}/claim-sort-indexes`, {
+        ...meta(),
+        name: "Reset order",
+        sorts,
+      });
+      await ok(`/claim-sort-indexes/${index.id}/build`, { ...meta(), expected_revision: 1 });
+    }
+    const originalRequest = { ...meta(), pool: f.slug, worker_id: "before-reset", count: 5, sorts };
+    const original = await ok("/claim", originalRequest, f.key);
+    expect(original.tasks.map((t: any) => t.data.b)).toEqual([2, 3, 4, 5, 6]);
+    const rows = (await pages(f.pool, sorts, 100)).slice(0, 5);
+    const preview = await ok("/tasks/bulk/preview", {
+      ...meta(),
+      pool_id: f.pool,
+      selection: { ids: rows.map((t) => t.task_uid) },
+      action: { kind: "reset", mode: "full", scope: "all", revoke: true },
+    });
+    const reset = await ok(`/operations/${preview.operation_id}/apply`, { ...meta(), limit: 50 });
+    expect(reset.items.map((i: any) => i.status)).toEqual(Array(5).fill("applied"));
+    expect((await pages(f.pool, sorts, 100)).slice(0, 5)).toEqual(
+      rows.map((row) =>
+        expect.objectContaining({ task_uid: row.task_uid, attempts_total: 0, status: "pending" }),
+      ),
+    );
+    // Existing receipts keep their original grants; only a new request selects again.
+    expect((await ok("/claim", originalRequest, f.key)).tasks).toEqual(original.tasks);
+    const next = await claim(f, sorts, { count: 5 });
+    expect(next.tasks.map((t: any) => t.task_id)).toEqual(
+      original.tasks.map((t: any) => t.task_id),
+    );
+    for (const [i, task] of next.tasks.entries()) {
+      expect(task.attempts).toBe(1);
+      expect(task.attempts_total).toBe(1);
+      expect(task.attempt_id).not.toBe(original.tasks[i].attempt_id);
+      expect(task.lease_generation).toBeGreaterThan(original.tasks[i].lease_generation);
+    }
+    const state = await env.DB.prepare(
+      "SELECT t.attempt_sequence,t.lifetime_attempts,ps.attempts,ps.lifetime_attempts profile_lifetime,(SELECT count(*) FROM attempts a WHERE a.task_uid=t.task_uid) history_count FROM tasks t JOIN task_profile_state ps ON ps.task_uid=t.task_uid WHERE t.pool_id=? AND ps.profile_id=?",
+    )
+      .bind(f.pool, f.profile)
+      .all();
+    expect(state.results).toEqual(
+      Array(5).fill({
+        attempt_sequence: 2,
+        lifetime_attempts: 2,
+        attempts: 1,
+        profile_lifetime: 2,
+        history_count: 2,
+      }),
+    );
+    const stale = await ok(
+      "/renew",
+      {
+        ...meta(),
+        pool: f.slug,
+        worker_id: "before-reset",
+        items: original.tasks.map((t: any) => ({
+          item_id: t.task_id,
+          task_id: t.task_id,
+          attempt_id: t.attempt_id,
+          lease_token: t.lease_token,
+          lease_generation: t.lease_generation,
+          instance_epoch: t.instance_epoch,
+          lease_seconds: 60,
+        })),
+      },
+      f.key,
+    );
+    expect(stale.items.map((i: any) => i.error.code)).toEqual(Array(5).fill("STALE_LEASE"));
+    expect((await claim(f, sorts)).tasks.map((t: any) => t.data)).toEqual([
+      { a: "2", b: 7 },
+      { a: "2", b: 8 },
+      { a: "3", b: 1 },
+    ]);
+  },
+);
+
+test.each([
+  { mode: "full", scope: "profile" },
+  { mode: "full", scope: "all" },
+  { mode: "soft", scope: "profile" },
+  { mode: "soft", scope: "all" },
+])(
+  "$scope $mode reset changes freshness only for reset profile counters",
+  async ({ mode, scope }) => {
+    const f = await fixture([{ b: 1 }, { b: 2 }]);
+    const other = await ok("/profiles", {
+      ...meta(),
+      family_id: f.family,
+      pool_id: f.pool,
+      slug: "other",
+      name: "Other",
+    });
+    const release = async (pool: string, tasks: any[]) => {
+      const result = await ok(
+        "/report",
+        {
+          ...meta(),
+          pool,
+          worker_id: "reset-scope",
+          items: tasks.map((t) => ({
+            item_id: t.task_id,
+            task_id: t.task_id,
+            attempt_id: t.attempt_id,
+            lease_token: t.lease_token,
+            lease_generation: t.lease_generation,
+            instance_epoch: t.instance_epoch,
+            outcome: "release",
+          })),
+        },
+        f.key,
+      );
+      expect(result.items.every((i: any) => i.status === "applied")).toBe(true);
+    };
+    for (const pool of [f.slug, `${f.slug}/other`]) {
+      const first = await claim(f, undefined, { pool, worker_id: "reset-scope", count: 1 });
+      expect(first.tasks.map((t: any) => t.data.b)).toEqual([1]);
+      await release(pool, first.tasks);
+    }
+    const rows = await pages(f.pool, defaultSorts());
+    const preview = await ok("/tasks/bulk/preview", {
+      ...meta(),
+      pool_id: f.pool,
+      profile_id: f.profile,
+      selection: { ids: [rows[0].task_uid] },
+      action: { kind: "reset", mode, scope },
+    });
+    const reset = await ok(`/operations/${preview.operation_id}/apply`, { ...meta(), limit: 50 });
+    expect(reset.items[0].status).toBe("applied");
+    const states = await env.DB.prepare(
+      "SELECT profile_id,attempts,lifetime_attempts FROM task_profile_state WHERE task_uid=? ORDER BY profile_id",
+    )
+      .bind(rows[0].task_uid)
+      .all();
+    expect(states.results).toEqual(
+      [f.profile, other.id].sort().map((profile_id) => ({
+        profile_id,
+        attempts: mode === "full" && (scope === "all" || profile_id === f.profile) ? 0 : 1,
+        lifetime_attempts: 1,
+      })),
+    );
+    const otherNext = await claim(f, undefined, {
+      pool: `${f.slug}/other`,
+      worker_id: "reset-scope",
+      count: 1,
+    });
+    expect(otherNext.tasks.map((t: any) => t.data.b)).toEqual([
+      mode === "full" && scope === "all" ? 1 : 2,
+    ]);
+    await release(`${f.slug}/other`, otherNext.tasks);
+    const next = await claim(f, undefined, { count: 1 });
+    expect(next.tasks.map((t: any) => t.data.b)).toEqual([mode === "full" ? 1 : 2]);
+  },
+);
 
 test("configured expression indexes build atomically, handle unusual keys, and invalidate on schema changes", async () => {
   const field = 'odd."key\\x';

@@ -1339,7 +1339,7 @@ function bulkDialog() {
     el(
       "p",
       { class: "input-note" },
-      "Preview freezes the IDs and revisions. Concurrent changes are reported as conflicts. Profile resets preserve global success; a soft reset does not clear exhausted attempt caps.",
+      "Preview freezes the IDs and revisions. Concurrent changes are reported as conflicts. Full reset restores fresh claim priority under the worker's sort. Soft reset retains retry priority and exhausted attempt caps. Profile resets preserve global success.",
     ),
     button(
       "Preview operation",

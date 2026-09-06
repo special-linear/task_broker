@@ -327,7 +327,7 @@ Global status is derived with precedence: deleted, completed, active lease, disa
 
 ### 5.3 Ordering and caps
 
-Default ordering: never attempted through the current profile first; then oldest profile grant time; then public task ID and internal UID for deterministic ties. Profiles may define a different validated ordering. Workers may filter but cannot supply arbitrary ordering. Release makes a task eligible immediately, with its recent grant time naturally placing it behind older work under the default order.
+Default ordering: zero attempts through the current profile since its last full reset first; then oldest profile grant time; then public task ID and internal UID for deterministic ties. Full resets restore fresh scheduling in their scope while retaining lifetime counters and history; soft resets preserve retry priority. Workers may request a validated scalar-field sort within these groups: fresh tasks use the requested fields before ID ties, and retries use oldest profile grant time before the requested fields and ID ties. Table sorting does not configure worker claims. Release makes a task eligible immediately, with its recent grant time naturally placing it behind older work under the default order.
 
 Support caps for:
 
