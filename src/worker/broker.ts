@@ -84,6 +84,8 @@ export async function claim(c: Context): Promise<unknown> {
       !profile.enabled ||
       !pool.enabled ||
       !family.enabled ||
+      profile.archived_at != null ||
+      family.archived_at !== null ||
       pool.archived_at !== null ||
       pool.migration_status !== "ready";
     const caps = {

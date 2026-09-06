@@ -3532,7 +3532,10 @@
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                   },
-                  "slug": {},
+                  "slug": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$"
+                  },
                   "name": {
                     "type": "string",
                     "minLength": 1,
@@ -5310,6 +5313,10 @@
                     "minLength": 1,
                     "maxLength": 128
                   },
+                  "profile_slug": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$"
+                  },
                   "description": {
                     "default": "",
                     "type": "string"
@@ -7086,7 +7093,10 @@
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  "slug": {},
+                  "slug": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$"
+                  },
                   "name": {
                     "type": "string",
                     "minLength": 1,
@@ -26722,9 +26732,16 @@
                         "additionalProperties": false
                       },
                       "default_profile_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "active_cap": {
                         "anyOf": [
@@ -26818,6 +26835,1770 @@
                         "type": "string"
                       },
                       "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete unused families after reviewing dependencies",
+        "operationId": "delete__admin_api_v1_families_id_",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "request_created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "dependency_token": {
+                    "type": "string",
+                    "minLength": 64,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "request_created_at",
+                  "expected_revision",
+                  "dependency_token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin-api/v1/families/{id}/removal": {
+      "get": {
+        "summary": "Review deletion eligibility and dependencies for families",
+        "operationId": "get__admin_api_v1_families_id_removal",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sorts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192,
+              "description": "URL-encoded JSON SortSpec array. Cannot be combined with legacy sort/direction."
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "pool_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "family_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "worker_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "issuing_key_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "table",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "expected_revision": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "dependency_token": {
+                          "type": "string"
+                        },
+                        "can_delete": {
+                          "type": "boolean"
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "profiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "family_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "family_id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "defaults": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "revoked_key_count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "expected_revision",
+                        "dependency_token",
+                        "can_delete",
+                        "reasons",
+                        "profiles",
+                        "defaults",
+                        "revoked_key_count"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
@@ -28551,9 +30332,16 @@
                         "additionalProperties": false
                       },
                       "default_profile_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "active_cap": {
                         "anyOf": [
@@ -28647,6 +30435,1770 @@
                         "type": "string"
                       },
                       "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete unused pools after reviewing dependencies",
+        "operationId": "delete__admin_api_v1_pools_id_",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "request_created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "dependency_token": {
+                    "type": "string",
+                    "minLength": 64,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "request_created_at",
+                  "expected_revision",
+                  "dependency_token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin-api/v1/pools/{id}/removal": {
+      "get": {
+        "summary": "Review deletion eligibility and dependencies for pools",
+        "operationId": "get__admin_api_v1_pools_id_removal",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sorts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192,
+              "description": "URL-encoded JSON SortSpec array. Cannot be combined with legacy sort/direction."
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "pool_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "family_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "worker_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "issuing_key_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "table",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "expected_revision": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "dependency_token": {
+                          "type": "string"
+                        },
+                        "can_delete": {
+                          "type": "boolean"
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "profiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "family_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "family_id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "defaults": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "revoked_key_count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "expected_revision",
+                        "dependency_token",
+                        "can_delete",
+                        "reasons",
+                        "profiles",
+                        "defaults",
+                        "revoked_key_count"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
@@ -30380,9 +33932,16 @@
                         "additionalProperties": false
                       },
                       "default_profile_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "active_cap": {
                         "anyOf": [
@@ -30476,6 +34035,1770 @@
                         "type": "string"
                       },
                       "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete unused profiles after reviewing dependencies",
+        "operationId": "delete__admin_api_v1_profiles_id_",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "request_created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "expected_revision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "dependency_token": {
+                    "type": "string",
+                    "minLength": 64,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "request_id",
+                  "request_created_at",
+                  "expected_revision",
+                  "dependency_token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error envelope. Retain prepared mutations after uncertain transport or retryable failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": false
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "api_version",
+                    "request_id",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin-api/v1/profiles/{id}/removal": {
+      "get": {
+        "summary": "Review deletion eligibility and dependencies for profiles",
+        "operationId": "get__admin_api_v1_profiles_id_removal",
+        "security": [
+          {
+            "AccessSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sorts",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192,
+              "description": "URL-encoded JSON SortSpec array. Cannot be combined with legacy sort/direction."
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "pool_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "family_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "worker_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "issuing_key_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "table",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Committed or replayed operation. Report/renew item errors remain HTTP 200.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "expected_revision": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "dependency_token": {
+                          "type": "string"
+                        },
+                        "can_delete": {
+                          "type": "boolean"
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "profiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "family_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "family_id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "defaults": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "revision": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "slug",
+                              "revision"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "revoked_key_count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "expected_revision",
+                        "dependency_token",
+                        "can_delete",
+                        "reasons",
+                        "profiles",
+                        "defaults",
+                        "revoked_key_count"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
@@ -58535,7 +63858,7 @@
                       "schema_version": {
                         "type": "integer",
                         "minimum": 1,
-                        "maximum": 4
+                        "maximum": 5
                       }
                     },
                     "required": [

@@ -2,6 +2,26 @@
 
 **Start here** explains setup, downloads the Python client, and creates disposable demo work. **Tasks** is the primary workspace. **Pools & profiles** controls schemas and worker eligibility. **API keys** issues and rotates family credentials. **Activity** exposes leases, warnings, operations and audit history. **Settings** holds global defaults, administrator membership, diagnostics, maintenance and portable migration.
 
+## Families, pools and worker routes
+
+A **family** supplies worker API keys, default settings and optional shared concurrency limits. A **pool** is a task table with its own input and result columns. Its owner family organizes it in the sidebar. A **profile** connects one family to one pool and supplies filtering and distribution settings; profiles in different families can expose the same pool.
+
+**Pools & profiles** shows owner families, profile target pools, full worker routes and the actual family default. Settings repeats those relationships, and **Copy route** copies the exact string accepted by `TaskClient.from_env(...)`. The Tasks screen also identifies the owner family and includes full routes in its profile selector.
+
+When creating a pool, choose **Worker route suffix**, for example `diameters`. The live preview shows `calculations/diameters`. A profile is created with the pool's display name; the first profile becomes the family's default. Suffixes must be unique within a family and use 1–64 ASCII letters, digits, underscores or hyphens, beginning with a letter or digit. Routes are normalized to lowercase. Changing a display name leaves worker routes unchanged. Existing suffixes cannot be edited; an additional profile can provide another route, with its own attempt and failure counters.
+
+In a family's **Settings**, **Default profile** chooses what the bare family route such as `calculations` selects. This always addresses one profile and one pool. Adding another pool does not change the default. Explicit routes continue to select their own profiles.
+
+## Archive, restore and delete configuration
+
+Families, pools and profiles have **Archive**, **Restore** and **Delete…** actions. Archiving disables new claims through that item, retains tasks/results/history and lets existing leases finish. Archived items and their descendants are hidden in normal configuration lists and navigation. **Show archived** (or **Show archived pools** in the sidebar) reveals them; this preference is stored in the browser. Restoring leaves the item disabled until you explicitly enable it. Restore archived parents as well to make a child visible in the normal lists.
+
+Archiving a family stops that family's routes. Other families' profiles can still access its owned pools unless the pools themselves are archived. The family owns its API-key scope; pool ownership alone does not control every route to that pool.
+
+**Delete…** checks current dependencies and explains whether permanent deletion is possible. An empty pool can be deleted with its unused profiles, field definitions and sort indexes. Tasks (including deleted tasks), attempts, imported counters, saved views, reviewed operations or recent worker requests prevent the corresponding pool/profile deletion. An empty family can be deleted after its pools and profiles are removed and its keys are permanently revoked. No tasks or attempt history are erased by these actions. Administrator audit records remain.
+
+The confirmation lists profiles and family defaults affected by deletion. Removing a default profile clears the family's default rather than silently selecting another. Dependencies and revisions are rechecked atomically; if they changed after review, reopen the deletion review. Items that cannot be deleted offer **Archive instead**.
+
 ## Tasks and conflicts
 
 Create tasks with the accessible form or import a table. Task IDs are generated when blank; supplied IDs are unique within a pool and remain reserved by history. Duplicate clones inputs and task metadata into new identities. Delete is a tombstone, not history erasure; restore reuses the original identity.

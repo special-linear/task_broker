@@ -5,6 +5,12 @@ export const mutation = z.object({
   request_id: z.string().uuid(),
   request_created_at: z.iso.datetime({ offset: true }),
 });
+export const configurationRemovalSchema = mutation
+  .extend({
+    expected_revision: z.number().int().positive(),
+    dependency_token: z.string().length(64),
+  })
+  .strict();
 export const workerEnvelope = mutation.extend({
   pool: z.string().min(1).max(256),
   worker_id: idSchema,
@@ -93,6 +99,7 @@ export const poolSchema = mutation
   .extend({
     family_id: z.string().uuid(),
     name: idSchema,
+    profile_slug: slugSchema.optional(),
     description: z.string().default(""),
     fields: z.array(fieldSchema),
     enabled: z.boolean().default(true),

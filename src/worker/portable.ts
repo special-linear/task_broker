@@ -95,7 +95,7 @@ export async function portableImportPreview(c: Context) {
             .object({
               format: z.literal("task-broker-portable"),
               format_version: z.literal(1),
-              schema_version: z.number().int().min(1).max(4),
+              schema_version: z.number().int().min(1).max(5),
             })
             .passthrough(),
           total_records: z.number().int().nonnegative(),

@@ -3,6 +3,15 @@ import { button, dialog, el, errorBox, labeled, select, stringify, toast } from 
 import { DEFAULTS, type Field } from "../shared/core";
 import { inputValue } from "./grid";
 import { portableImport } from "./transfer";
+import {
+  archiveReason,
+  familyFor,
+  profileRoute,
+  showArchived,
+  setShowArchived,
+  visibleConfiguration,
+  type ConfigurationState,
+} from "./configuration-view";
 const types = ["string", "integer", "number", "boolean", "datetime", "json"];
 function fieldsEditor(initial: Partial<Field>[] = []) {
   const host = el("div", { class: "fields-list" }),
@@ -132,6 +141,7 @@ function fieldsEditor(initial: Partial<Field>[] = []) {
   return { host, read, add: () => add() };
 }
 export function createPoolDialog(families: any[], done: (id: string) => Promise<void>) {
+  families = families.filter((f) => !f.archived_at);
   const d = dialog("Create a pool"),
     form = el("form"),
     name = el("input", { required: true, placeholder: "Diameter experiments" }),
@@ -147,6 +157,13 @@ export function createPoolDialog(families: any[], done: (id: string) => Promise<
     ),
     familyName = el("input", { value: "Experiments" }),
     slug = el("input", { value: "experiments" }),
+    suffix = el("input", {
+      required: true,
+      placeholder: "diameters",
+      pattern: "[a-zA-Z0-9][a-zA-Z0-9_\\-]{0,63}",
+      maxLength: 64,
+    }),
+    route = el("code"),
     editor = fieldsEditor([{ key: "n", label: "n", type: "integer", required: true }]),
     errors = el("div");
   form.append(
@@ -157,7 +174,15 @@ export function createPoolDialog(families: any[], done: (id: string) => Promise<
       labeled("Family", family),
       labeled("New family name", familyName),
       labeled("New family route", slug),
+      labeled("Worker route suffix", suffix),
       labeled("Description", description),
+    ),
+    el(
+      "p",
+      { class: "input-note" },
+      "Workers will use ",
+      route,
+      ". This creates a profile pointing to this pool. Display names can change without changing this route.",
     ),
     el("h3", { style: "margin-top:22px" }, "Input and result columns"),
     editor.host,
@@ -170,6 +195,32 @@ export function createPoolDialog(families: any[], done: (id: string) => Promise<
       el("button", { type: "submit", class: "primary" }, "Create pool"),
     ),
   );
+  let customSuffix = false;
+  const updateRoute = () => {
+    const creatingFamily = family.value === "new";
+    familyName.parentElement!.hidden = !creatingFamily;
+    slug.parentElement!.hidden = !creatingFamily;
+    familyName.required = creatingFamily;
+    slug.required = creatingFamily;
+    const prefix = creatingFamily ? slug.value : families.find((f) => f.id === family.value)?.slug;
+    route.textContent = `${prefix || "family"}/${suffix.value || "suffix"}`.toLowerCase();
+  };
+  name.addEventListener("input", () => {
+    if (!customSuffix)
+      suffix.value = name.value
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/^[^a-z0-9]+|-+$/g, "")
+        .slice(0, 64);
+    updateRoute();
+  });
+  suffix.addEventListener("input", () => {
+    customSuffix = true;
+    updateRoute();
+  });
+  family.addEventListener("change", updateRoute);
+  slug.addEventListener("input", updateRoute);
+  updateRoute();
   form.onsubmit = async (e) => {
     e.preventDefault();
     errors.replaceChildren();
@@ -183,10 +234,18 @@ export function createPoolDialog(families: any[], done: (id: string) => Promise<
             slug: slug.value,
           })
         ).id;
+      // Keep the newly created family selected if pool validation needs a retry.
+      if (family.value === "new") {
+        families.push({ id: familyId, name: familyName.value, slug: slug.value.toLowerCase() });
+        family.append(el("option", { value: familyId }, familyName.value));
+        family.value = familyId;
+        updateRoute();
+      }
       const pool = await api("/pools", {
         ...operation(),
         family_id: familyId,
         name: name.value,
+        profile_slug: suffix.value,
         description: description.value,
         fields: editor.read(),
       });
@@ -242,10 +301,26 @@ export async function configurationScreen(
     el("h1", {}, "Pools & profiles"),
     el("p", { class: "muted" }, "Configure shared schemas and decide how workers receive tasks."),
     el(
+      "p",
+      { class: "input-note" },
+      "A family supplies worker keys and defaults. A pool holds tasks and columns. A profile connects a family to one pool through a worker route.",
+    ),
+    el(
       "div",
       { class: "toolbar" },
       button("+ Create pool", () => createPoolDialog(state.families, async () => refresh())),
       button("+ Create profile", () => profileDialog(state, refresh)),
+      labeled(
+        "Show archived",
+        el("input", {
+          type: "checkbox",
+          checked: showArchived(),
+          onchange: async (event: Event) => {
+            setShowArchived((event.target as HTMLInputElement).checked);
+            await refresh();
+          },
+        }),
+      ),
     ),
   );
   for (const [table, title, rows] of [
@@ -264,12 +339,21 @@ export async function configurationScreen(
         el(
           "tr",
           {},
-          ...["Name", "Enabled", "Route / scope", "Actions"].map((t) => el("th", {}, t)),
+          ...[
+            "Name / status",
+            "Enabled",
+            ...(table === "families"
+              ? ["Default worker route"]
+              : table === "pools"
+                ? ["Owner family", "Worker routes / profiles"]
+                : ["Family", "Target pool", "Worker route"]),
+            "Actions",
+          ].map((t) => el("th", {}, t)),
         ),
       ),
       body,
     );
-    for (const row of rows) {
+    for (const row of rows.filter((row: any) => visibleConfiguration(state, table, row))) {
       const name = el("input", {
           value: row.name,
           "aria-label": `${row.name} name`,
@@ -278,6 +362,7 @@ export async function configurationScreen(
         enabled = el("input", {
           type: "checkbox",
           checked: !!row.enabled,
+          disabled: !!row.archived_at,
           "aria-label": `${row.name} enabled`,
           onchange: () =>
             drafts.set(row.id, {
@@ -287,42 +372,57 @@ export async function configurationScreen(
         }),
         actions = el(
           "td",
-          {},
-          button("Settings", () => configForm(table, row, refresh)),
+          { class: "configuration-actions" },
+          button("Settings", () => configForm(table, row, state, refresh)),
+          button(row.archived_at ? "Restore" : "Archive", () =>
+            archiveConfiguration(table, row, state, refresh),
+          ),
+          button("Delete…", () => removalDialog(table, row, state, refresh)),
         );
       if (table === "pools")
         actions.append(
           button("Columns", () => schemaDialog(row, refresh)),
           button("Claim sort indexes", () => claimSortIndexes(row)),
-          button(row.archived_at ? "Unarchive" : "Archive", async () => {
-            await api(
-              `/pools/${row.id}`,
-              {
-                ...operation(),
-                expected_revision: row.config_revision,
-                patch: { archived: !row.archived_at },
-              },
-              "PATCH",
-            );
-            await refresh();
-          }),
         );
       body.append(
         el(
           "tr",
           {},
-          el("td", {}, name),
-          el("td", {}, enabled),
           el(
             "td",
             {},
-            row.slug ??
-              `${state.profiles.filter((p: any) => p.pool_id === row.id).length} profiles`,
+            name,
+            archiveReason(state, table, row)
+              ? el("span", { class: "badge" }, archiveReason(state, table, row))
+              : null,
           ),
+          el("td", {}, enabled),
+          ...(table === "families"
+            ? [el("td", {}, configurationContext(table, row, state))]
+            : table === "pools"
+              ? [el("td", {}, familyLabel(state, row)), el("td", {}, poolRoutes(row, state))]
+              : [
+                  el("td", {}, familyLabel(state, row)),
+                  el(
+                    "td",
+                    {},
+                    state.pools.find((p: any) => p.id === row.pool_id)?.name ?? "Unknown pool",
+                  ),
+                  el("td", {}, routeDisplay(state, row)),
+                ]),
           actions,
         ),
       );
     }
+    const hiddenCount = rows.filter((row: any) => !visibleConfiguration(state, table, row)).length;
+    if (hiddenCount)
+      panel.append(
+        el(
+          "p",
+          { class: "muted" },
+          `${hiddenCount} archived items or items in archived families/pools hidden. Enable Show archived to inspect or restore them.`,
+        ),
+      );
     panel.append(
       el("div", { class: "table-scroll" }, grid),
       button(
@@ -345,11 +445,228 @@ export async function configurationScreen(
     main.append(panel);
   }
 }
-function configForm(table: string, row: any, refresh: () => Promise<void>) {
+function familyLabel(state: ConfigurationState, row: any) {
+  const family = familyFor(state, row);
+  return el(
+    "div",
+    {},
+    family?.name ?? "Unknown family",
+    el("br"),
+    el("code", {}, family?.slug ?? ""),
+  );
+}
+function routeDisplay(state: ConfigurationState, profile: any) {
+  const family = familyFor(state, profile);
+  const pool = state.pools.find((p) => p.id === profile.pool_id);
+  const unavailable =
+    archiveReason(state, "profiles", profile) ||
+    (!family?.enabled
+      ? "Family disabled"
+      : !pool?.enabled
+        ? "Pool disabled"
+        : !profile.enabled
+          ? "Profile disabled"
+          : "");
+  return el(
+    "div",
+    { class: "route-detail" },
+    el("code", {}, profileRoute(state, profile)),
+    button("Copy route", async () => {
+      await navigator.clipboard.writeText(profileRoute(state, profile));
+      toast("Worker route copied.");
+    }),
+    family?.default_profile_id === profile.id
+      ? el("small", {}, `Family default: ${family.slug}`)
+      : null,
+    unavailable ? el("small", {}, unavailable) : null,
+  );
+}
+function poolRoutes(pool: any, state: ConfigurationState) {
+  const profiles = state.profiles.filter((p) => p.pool_id === pool.id);
+  return el(
+    "div",
+    { class: "configuration-context" },
+    ...profiles.map((profile) =>
+      el("div", {}, el("strong", {}, profile.name), routeDisplay(state, profile)),
+    ),
+    profiles.length ? null : el("p", {}, "No profiles. Create a profile to give workers access."),
+  );
+}
+function configurationContext(table: string, row: any, state: ConfigurationState) {
+  if (table === "families") {
+    const profile = state.profiles.find((p) => p.id === row.default_profile_id);
+    const pool = state.pools.find((p) => p.id === profile?.pool_id);
+    return el(
+      "div",
+      { class: "configuration-context" },
+      el("div", {}, "Family route: ", el("code", {}, row.slug)),
+      profile
+        ? el(
+            "div",
+            {},
+            `Default: ${profile.name} → ${pool?.name ?? "Unknown pool"}`,
+            routeDisplay(state, profile),
+          )
+        : el("p", {}, "No default profile. Choose one in Settings to use the bare family route."),
+      el(
+        "small",
+        {},
+        `${state.pools.filter((p) => p.owner_family_id === row.id).length} owned pools · ${state.profiles.filter((p) => p.family_id === row.id).length} profiles`,
+      ),
+    );
+  }
+  return el(
+    "div",
+    { class: "configuration-context" },
+    el("div", {}, table === "pools" ? "Owner family: " : "Family: ", familyLabel(state, row)),
+    table === "pools"
+      ? poolRoutes(row, state)
+      : el(
+          "div",
+          {},
+          `Target pool: ${state.pools.find((p) => p.id === row.pool_id)?.name ?? "Unknown pool"}`,
+          routeDisplay(state, row),
+        ),
+  );
+}
+async function archiveConfiguration(
+  table: string,
+  row: any,
+  state: ConfigurationState,
+  refresh: () => Promise<void>,
+) {
+  const restoring = !!row.archived_at;
+  const d = dialog(`${restoring ? "Restore" : "Archive"} ${row.name}`, true);
+  d.content.append(
+    configurationContext(table, row, state),
+    el(
+      "p",
+      {},
+      restoring
+        ? "Restore this item to the active lists. It stays disabled until you enable it. Archived parents must also be restored before it appears in the normal view."
+        : "Stop new claims through this item and hide it from the normal lists. Existing leases can finish; tasks, results and history are retained. Use Show archived to find it again.",
+    ),
+    el(
+      "p",
+      { hidden: table !== "families" || restoring },
+      "This stops this family's worker routes. Other families' profiles can still access its pools unless those pools are also archived.",
+    ),
+    button(
+      restoring ? "Restore item" : "Archive item",
+      async () => {
+        await api(
+          `/${table}/${row.id}`,
+          {
+            ...operation(),
+            expected_revision: row.config_revision,
+            patch: { archived: !restoring },
+          },
+          "PATCH",
+        );
+        d.dialog.close();
+        await refresh();
+      },
+      "primary",
+    ),
+  );
+}
+async function removalDialog(
+  table: string,
+  row: any,
+  state: ConfigurationState,
+  refresh: () => Promise<void>,
+) {
+  const review = await api(`/${table}/${row.id}/removal`);
+  const d = dialog(`Delete ${review.name}`, true);
+  d.content.append(configurationContext(table, row, state));
+  if (!review.can_delete) {
+    d.content.append(
+      el("p", {}, "This item cannot be permanently deleted:"),
+      el("ul", {}, ...review.reasons.map((reason: string) => el("li", {}, reason))),
+      el("p", {}, "Archiving retains its data and hides it from normal lists."),
+    );
+    if (!row.archived_at)
+      d.content.append(
+        button(
+          "Archive instead",
+          () => {
+            d.dialog.close();
+            return archiveConfiguration(table, row, state, refresh);
+          },
+          "primary",
+        ),
+      );
+    return;
+  }
+  d.content.append(
+    el(
+      "p",
+      {},
+      "Permanently delete this unused item? This cannot be undone. An audit record of the deletion remains.",
+    ),
+  );
+  if (table === "pools" && review.profiles.length)
+    d.content.append(
+      el("p", {}, "These unused profiles will also be deleted:"),
+      el(
+        "ul",
+        {},
+        ...review.profiles.map((p: any) => el("li", {}, `${p.name} (${profileRoute(state, p)})`)),
+      ),
+    );
+  if (review.defaults.length)
+    d.content.append(
+      el(
+        "p",
+        {},
+        `These families will have no default profile until you choose another in Settings: ${review.defaults.map((f: any) => f.name).join(", ")}.`,
+      ),
+    );
+  if (review.revoked_key_count)
+    d.content.append(
+      el("p", {}, `${review.revoked_key_count} permanently revoked API keys will also be removed.`),
+    );
+  const errors = el("div");
+  d.content.append(
+    errors,
+    button(
+      "Delete permanently",
+      async () => {
+        try {
+          await api(
+            `/${table}/${row.id}`,
+            {
+              ...operation(),
+              expected_revision: review.expected_revision,
+              dependency_token: review.dependency_token,
+            },
+            "DELETE",
+          );
+          d.dialog.close();
+          toast("Item deleted.");
+          await refresh();
+        } catch (error) {
+          errors.replaceChildren(errorBox(error));
+        }
+      },
+      "danger",
+    ),
+  );
+}
+function configForm(
+  table: string,
+  row: any,
+  state: ConfigurationState,
+  refresh: () => Promise<void>,
+) {
   const d = dialog(`${row.name} settings`),
     name = el("input", { value: row.name }),
     description = el("textarea", { value: row.description ?? "" }),
-    enabled = el("input", { type: "checkbox", checked: !!row.enabled }),
+    enabled = el("input", {
+      type: "checkbox",
+      checked: !!row.enabled,
+      disabled: !!row.archived_at,
+    }),
     policy = policyEditor(JSON.parse(row.policy_json ?? "{}"), table !== "profiles"),
     errors = el("div");
   const cap = el("input", {
@@ -376,7 +693,36 @@ function configForm(table: string, row: any, refresh: () => Promise<void>) {
     allowlist = el("input", {
       value: JSON.parse(row.filter_allowlist_json ?? "[]").join(", "),
     });
-  d.content.append(labeled("Name", name), labeled("Enabled", enabled));
+  d.content.append(
+    configurationContext(table, row, state),
+    labeled("Name", name),
+    labeled("Enabled", enabled),
+  );
+  if (row.archived_at)
+    d.content.append(
+      el("p", { class: "input-note" }, "Archived. Restore this item before enabling it."),
+    );
+  const defaultProfile = select(
+    [
+      { value: "", label: "No default profile" },
+      ...state.profiles
+        .filter((p) => p.family_id === row.id)
+        .map((p) => ({
+          value: p.id,
+          label: `${p.name} → ${state.pools.find((pool) => pool.id === p.pool_id)?.name ?? "Unknown pool"} (${profileRoute(state, p)})${p.archived_at ? " · Archived" : !p.enabled ? " · Disabled" : ""}`,
+        })),
+    ],
+    row.default_profile_id ?? "",
+  );
+  if (table === "families")
+    d.content.append(
+      labeled("Default profile", defaultProfile),
+      el(
+        "p",
+        { class: "input-note" },
+        `Workers using just ${row.slug} claim from this profile's pool. Explicit family/profile routes keep their own targets.`,
+      ),
+    );
   if (table !== "profiles") d.content.append(labeled("Description", description));
   if (table === "pools")
     d.content.append(
@@ -407,6 +753,7 @@ function configForm(table: string, row: any, refresh: () => Promise<void>) {
       async () => {
         try {
           const patch: any = { name: name.value, enabled: enabled.checked };
+          if (table === "families") patch.default_profile_id = defaultProfile.value || null;
           if (table !== "profiles") patch.description = description.value;
           if (table === "pools")
             Object.assign(patch, {
@@ -446,12 +793,28 @@ function configForm(table: string, row: any, refresh: () => Promise<void>) {
 }
 function profileDialog(state: any, refresh: () => Promise<void>) {
   const d = dialog("Create a profile"),
-    family = select(state.families.map((f: any) => ({ value: f.id, label: f.name }))),
-    pool = select(state.pools.map((p: any) => ({ value: p.id, label: p.name }))),
+    family = select(
+      state.families
+        .filter((f: any) => !f.archived_at)
+        .map((f: any) => ({ value: f.id, label: `${f.name} (${f.slug})` })),
+    ),
+    pool = select(
+      state.pools
+        .filter((p: any) => !p.archived_at)
+        .map((p: any) => ({ value: p.id, label: `${familyFor(state, p)?.name} / ${p.name}` })),
+    ),
     name = el("input", { placeholder: "GPU workers" }),
     slug = el("input", { placeholder: "gpu" }),
     filter = el("input", { placeholder: "has:gpu" }),
     policy = policyEditor({}, false);
+  const route = el("code");
+  const updateRoute = () => {
+    route.textContent =
+      `${state.families.find((f: any) => f.id === family.value)?.slug ?? "family"}/${slug.value || "suffix"}`.toLowerCase();
+  };
+  family.addEventListener("change", updateRoute);
+  slug.addEventListener("input", updateRoute);
+  updateRoute();
   d.content.append(
     el(
       "div",
@@ -462,6 +825,7 @@ function profileDialog(state: any, refresh: () => Promise<void>) {
       labeled("Route suffix", slug),
       labeled("Mandatory filter", filter),
     ),
+    el("p", { class: "input-note" }, "Worker route: ", route),
     policy.container,
     button(
       "Create profile",

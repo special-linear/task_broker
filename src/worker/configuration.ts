@@ -86,23 +86,37 @@ export async function createPool(c: Context) {
     validateFields(body.fields);
     const family = await one(c.env.DB, "SELECT * FROM families WHERE id=?", body.family_id);
     assert(family, "NOT_FOUND", "Family not found.", 404);
+    assert(
+      !family.archived_at,
+      "INVALID_VALUE",
+      "Restore this family before creating a pool in it.",
+    );
     const fields = body.fields.map((f, i) => ({
       ...f,
       id: f.id ?? crypto.randomUUID(),
       position: i,
     }));
     const slug =
-      body.name
+      body.profile_slug ??
+      (body.name
         .toLowerCase()
         .replace(/[^a-z0-9_-]/g, "-")
         .replace(/^-+/, "")
-        .slice(0, 48) || id.slice(0, 8);
+        .slice(0, 48) ||
+        id.slice(0, 8));
     const exists = await one(
       c.env.DB,
-      "SELECT id FROM profiles WHERE family_id=? AND slug=?",
+      "SELECT id FROM profiles WHERE family_id=? AND slug=? UNION ALL SELECT profile_id FROM profile_aliases WHERE route=? LIMIT 1",
       family.id,
       slug,
+      `${family.slug}/${slug}`,
     );
+    assert(
+      !body.profile_slug || !exists,
+      "INVALID_VALUE",
+      "This route suffix is already used in this family. Choose another suffix.",
+    );
+    configGuard(r, [{ table: "families", id: family.id, revision: family.config_revision }]);
     r.statements.push(
       stmt(
         c.env.DB,
@@ -131,7 +145,7 @@ export async function createPool(c: Context) {
         family.id,
         id,
         exists ? `${slug}-${id.slice(0, 6)}` : slug,
-        "Default",
+        body.name,
         json([
           ...fields.filter((f) => f.kind === "input").map((f) => f.key),
           "task_id",
@@ -168,6 +182,29 @@ export async function createProfile(c: Context) {
     r = await beginReceipt(c.env, c.actor, "profile.create", "profiles", body),
     id = crypto.randomUUID();
   if (!r.existing) {
+    const family = await one(c.env.DB, "SELECT * FROM families WHERE id=?", body.family_id);
+    const pool = await one(c.env.DB, "SELECT * FROM pools WHERE id=?", body.pool_id);
+    assert(family && pool, "NOT_FOUND", "Family or pool not found.", 404);
+    assert(
+      !family.archived_at && !pool.archived_at,
+      "INVALID_VALUE",
+      "Restore the family and pool before creating a profile.",
+    );
+    assert(
+      !(await one(
+        c.env.DB,
+        "SELECT id FROM profiles WHERE family_id=? AND slug=? UNION ALL SELECT profile_id FROM profile_aliases WHERE route=? LIMIT 1",
+        body.family_id,
+        body.slug,
+        `${family.slug}/${body.slug}`,
+      )),
+      "INVALID_VALUE",
+      "This route suffix is already used in this family. Choose another suffix.",
+    );
+    configGuard(r, [
+      { table: "families", id: family.id, revision: family.config_revision },
+      { table: "pools", id: pool.id, revision: pool.config_revision },
+    ]);
     assert(
       !Object.hasOwn(body.policy, "family_cap") && !Object.hasOwn(body.policy, "worker_family_cap"),
       "INVALID_VALUE",
@@ -222,7 +259,7 @@ function raiseReceiptRetention(r: Receipt, policy: { max_lifetime_seconds?: numb
       ),
     );
 }
-const configPatch = mutation
+export const configPatch = mutation
   .extend({
     expected_revision: z.number().int().positive(),
     patch: z
@@ -232,7 +269,7 @@ const configPatch = mutation
         enabled: z.boolean().optional(),
         archived: z.boolean().optional(),
         policy: policySchema.optional(),
-        default_profile_id: z.string().uuid().optional(),
+        default_profile_id: z.string().uuid().nullable().optional(),
         active_cap: z.number().int().nonnegative().nullable().optional(),
         total_attempt_cap: z.number().int().nonnegative().nullable().optional(),
         required_result: z.boolean().optional(),
@@ -267,9 +304,22 @@ export async function updateConfiguration(
               "total_attempt_cap",
               "required_result",
             ]
-          : ["name", "enabled", "policy", "mandatory_filter", "projection", "filter_allowlist"];
+          : [
+              "name",
+              "enabled",
+              "archived",
+              "policy",
+              "mandatory_filter",
+              "projection",
+              "filter_allowlist",
+            ];
     for (const k of Object.keys(body.patch))
       assert(allowed.includes(k), "INVALID_VALUE", `${k} is not an editable ${table} property.`);
+    assert(
+      !body.patch.enabled || !(body.patch.archived ?? !!current.archived_at),
+      "INVALID_VALUE",
+      "Restore this archived item before enabling it.",
+    );
     if (body.patch.policy) {
       effectivePolicy(body.patch.policy);
       raiseReceiptRetention(r, body.patch.policy);
@@ -301,7 +351,7 @@ export async function updateConfiguration(
           `Unknown projected field: ${f}`,
         );
     }
-    if (body.patch.default_profile_id)
+    if (body.patch.default_profile_id) {
       assert(
         await one(
           c.env.DB,
@@ -312,6 +362,16 @@ export async function updateConfiguration(
         "INVALID_VALUE",
         "The default profile must belong to this family.",
       );
+      r.statements.push(
+        stmt(
+          c.env.DB,
+          "UPDATE requests SET guard_config=EXISTS(SELECT 1 FROM profiles WHERE id=? AND family_id=?) WHERE uid=?",
+          body.patch.default_profile_id,
+          id,
+          r.uid,
+        ),
+      );
+    }
     const sets: string[] = [],
       args: unknown[] = [];
     for (const [k, v] of Object.entries(body.patch)) {

@@ -26,6 +26,14 @@ import type { TaskRow } from "../shared/contracts";
 import { importDialog, exportDialog, parseTable } from "./transfer";
 import { startHere } from "./onboarding";
 import { configurationScreen, createPoolDialog, keysScreen, settingsScreen } from "./screens";
+import {
+  archiveReason,
+  familyFor,
+  profileRoute,
+  showArchived,
+  setShowArchived,
+  visibleConfiguration,
+} from "./configuration-view";
 type Draft = {
   row: TaskRow;
   key: string;
@@ -136,7 +144,8 @@ async function start() {
     }
     await refreshConfig();
     state.poolId = localStorage.getItem("task-broker:last-pool") ?? state.pools[0]?.id ?? "";
-    if (!state.pools.some((p) => p.id === state.poolId)) state.poolId = state.pools[0]?.id ?? "";
+    if (!state.pools.some((p) => p.id === state.poolId && visibleConfiguration(state, "pools", p)))
+      state.poolId = state.pools.find((p) => visibleConfiguration(state, "pools", p))?.id ?? "";
     await navigate(location.pathname.replace(/^\/admin\/?/, "").split("/")[0] || "tasks", true);
   } catch (e) {
     main.replaceChildren(
@@ -155,8 +164,11 @@ async function startAgain() {
 function renderPoolNav() {
   poolNav.replaceChildren();
   for (const family of state.families) {
+    if (!visibleConfiguration(state, "families", family)) continue;
     poolNav.append(el("small", {}, family.name));
-    for (const p of state.pools.filter((p) => p.owner_family_id === family.id))
+    for (const p of state.pools.filter(
+      (p) => p.owner_family_id === family.id && visibleConfiguration(state, "pools", p),
+    ))
       poolNav.append(
         button(
           `${p.archived_at ? "◌" : "○"} ${p.name}`,
@@ -175,6 +187,22 @@ function renderPoolNav() {
       );
   }
   poolNav.append(
+    labeled(
+      "Show archived pools",
+      el("input", {
+        type: "checkbox",
+        checked: showArchived(),
+        onchange: async (event: Event) => {
+          const input = event.target as HTMLInputElement;
+          if (!(await canLeave())) {
+            input.checked = showArchived();
+            return;
+          }
+          setShowArchived(input.checked);
+          await navigate(state.screen, true);
+        },
+      }),
+    ),
     button("+ Create pool", () =>
       createPoolDialog(state.families, async (id) => {
         await refreshConfig();
@@ -255,7 +283,36 @@ async function navigate(screen: string, force = false) {
   else await navigate("tasks", true);
 }
 async function showTasks() {
+  if (!state.pools.some((p) => p.id === state.poolId && visibleConfiguration(state, "pools", p))) {
+    state.poolId = state.pools.find((p) => visibleConfiguration(state, "pools", p))?.id ?? "";
+    state.profileId = "";
+    state.cursor = null;
+    state.back = [];
+  }
   if (!state.poolId) {
+    if (state.pools.length) {
+      main.append(
+        el(
+          "div",
+          { class: "empty" },
+          el("h1", {}, "No visible pools"),
+          el(
+            "p",
+            {},
+            "Your pools are archived or belong to archived families. Show archived pools to inspect their tasks or restore them in Pools & profiles.",
+          ),
+          button(
+            "Show archived pools",
+            () => {
+              setShowArchived(true);
+              return navigate("tasks", true);
+            },
+            "primary",
+          ),
+        ),
+      );
+      return;
+    }
     main.append(
       el(
         "div",
@@ -294,7 +351,11 @@ async function showTasks() {
     title = el(
       "div",
       {},
-      el("p", { class: "eyebrow" }, "Experiment workspace"),
+      el(
+        "p",
+        { class: "eyebrow" },
+        `Family: ${familyFor(state, pool)?.name ?? "Unknown"}${archiveReason(state, "pools", pool) ? ` · ${archiveReason(state, "pools", pool)}` : ""}`,
+      ),
       el("h1", {}, pool?.name ?? "Tasks"),
       el(
         "span",
@@ -325,7 +386,7 @@ async function showTasks() {
         .filter((p) => p.pool_id === state.poolId)
         .map((p) => ({
           value: p.id,
-          label: `${state.families.find((f) => f.id === p.family_id)?.name} / ${p.name}`,
+          label: `${state.families.find((f) => f.id === p.family_id)?.name} / ${p.name} (${profileRoute(state, p)})${archiveReason(state, "profiles", p) ? ` · ${archiveReason(state, "profiles", p)}` : ""}`,
         })),
     ],
     state.profileId,

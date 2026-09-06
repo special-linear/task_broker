@@ -4,6 +4,7 @@ import { fieldSchema, idSchema, policySchema } from "./core";
 import {
   routes as basicRoutes,
   mutation,
+  configurationRemovalSchema,
   patchSchema,
   leaseIdentity,
   reportItemSchema,
@@ -80,7 +81,7 @@ export const configPatchSchema = mutation
         enabled: z.boolean().optional(),
         archived: z.boolean().optional(),
         policy: policySchema.optional(),
-        default_profile_id: uuid.optional(),
+        default_profile_id: uuid.nullable().optional(),
         active_cap: z.number().int().nonnegative().nullable().optional(),
         total_attempt_cap: z.number().int().nonnegative().nullable().optional(),
         required_result: z.boolean().optional(),
@@ -283,6 +284,13 @@ export const routes: RouteContract[] = [
   ...["families", "pools", "profiles"].flatMap((p) => [
     get(`/${p}/{id}`, `Inspect ${p}`),
     endpoint("patch", `/${p}/{id}`, configPatchSchema, `Conditionally update ${p}`),
+    get(`/${p}/{id}/removal`, `Review deletion eligibility and dependencies for ${p}`),
+    endpoint(
+      "delete",
+      `/${p}/{id}`,
+      configurationRemovalSchema,
+      `Delete unused ${p} after reviewing dependencies`,
+    ),
   ]),
   get("/pools/{id}/fields", "Current input and result schema"),
   get("/pools/{id}/claim-sort-indexes", "List configured claim sort indexes"),
@@ -416,7 +424,7 @@ export const routes: RouteContract[] = [
           .object({
             format: z.literal("task-broker-portable"),
             format_version: z.literal(1),
-            schema_version: z.number().int().min(1).max(4),
+            schema_version: z.number().int().min(1).max(5),
           })
           .passthrough(),
         total_records: z.number().int().nonnegative(),
@@ -492,6 +500,20 @@ for (const route of routes) {
       });
     else if (["/families/{id}", "/pools/{id}", "/profiles/{id}"].includes(p))
       route.response = configRow;
+    else if (/^\/(families|pools|profiles)\/\{id\}\/removal$/.test(p))
+      route.response = z.object({
+        id: uuid,
+        name: z.string(),
+        expected_revision: revision,
+        dependency_token: z.string(),
+        can_delete: z.boolean(),
+        reasons: z.array(z.string()),
+        profiles: z.array(
+          z.object({ id: uuid, family_id: uuid, name: z.string(), slug: z.string(), revision }),
+        ),
+        defaults: z.array(z.object({ id: uuid, name: z.string(), slug: z.string(), revision })),
+        revoked_key_count: z.number().int(),
+      });
     else if (p === "/keys")
       route.response = z.object({
         rows: z.array(keyMetadata.partial().extend({ id: uuid })),

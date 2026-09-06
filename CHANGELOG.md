@@ -2,12 +2,14 @@
 
 ## Unreleased
 
+- Family/pool/profile context, complete copyable worker routes and a family default selector in configuration screens; choose the initial profile suffix during pool creation.
+- Reviewed deletion of unused configuration, with transactional dependency checks and retained audit history; archive/restore for families, pools and profiles, with archived items hidden by default.
 - Stable multi-column table sorting, saved-view compatibility and cancellable All rows loading with local reordering after completion.
 - Exports freeze the complete table order across pages and formats, including ordered attempt history.
 - Optional ordered claims in the HTTP API and Python client preserve fresh/retry priorities, capacity limits and idempotent replay.
 - Administrator-configured claim sort expression indexes with build/rebuild/delete actions, schema invalidation and portable restoration as unbuilt definitions.
 
-Migration 0004 adds claim sort index metadata. Apply it before running this version; existing data and default claim order are preserved. Remote D1 verification remains required before production deployment.
+Migration 0004 adds claim sort index metadata; migration 0005 adds profile archiving. Apply both before running this version; existing data and default claim order are preserved. Remote D1 verification remains required before production deployment.
 
 ## 0.1.0 — release candidate
 

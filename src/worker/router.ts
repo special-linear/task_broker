@@ -1,4 +1,5 @@
 import { sortResolver } from "./sorting";
+import { deleteConfiguration, reviewConfigurationRemoval } from "./configuration-removal";
 import { listSortIndexes, createSortIndex, changeSortIndex } from "./sort-indexes";
 import { sortSchema, sortChoice, resolveSorts, sortSpec } from "../shared/sort";
 import { recordDto } from "./presentation";
@@ -55,6 +56,13 @@ export async function adminRoute(c: Context): Promise<unknown> {
     method = c.request.method,
     db = c.env.DB;
   const indexCollection = path.match(/^\/pools\/([^/]+)\/claim-sort-indexes$/);
+  const removal = path.match(/^\/(families|pools|profiles)\/([^/]+)\/removal$/);
+  if (removal && method === "GET")
+    return reviewConfigurationRemoval(
+      c,
+      removal[1] as "families" | "pools" | "profiles",
+      removal[2],
+    );
   if (indexCollection && method === "GET") return listSortIndexes(c, indexCollection[1]);
   if (indexCollection && method === "POST") return createSortIndex(c, indexCollection[1]);
   const indexBuild = path.match(/^\/claim-sort-indexes\/([^/]+)\/build$/);
@@ -176,6 +184,13 @@ export async function adminRoute(c: Context): Promise<unknown> {
     if (m) return saveView(c, m[1]);
   }
   if (method === "DELETE") {
+    const configuration = path.match(/^\/(families|pools|profiles)\/([^/]+)$/);
+    if (configuration)
+      return deleteConfiguration(
+        c,
+        configuration[1] as "families" | "pools" | "profiles",
+        configuration[2],
+      );
     const m = path.match(/^\/views\/([^/]+)$/);
     if (m) {
       const body = validate(

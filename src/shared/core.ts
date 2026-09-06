@@ -124,7 +124,7 @@ export const idSchema = z
 export const slugSchema = z
   .string()
   .regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/)
-  .transform((s) => s.toLowerCase());
+  .toLowerCase();
 const cap = z.number().int().min(0).nullable().optional();
 export const policySchema = z
   .object({

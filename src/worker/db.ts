@@ -309,6 +309,12 @@ export async function commitReceipt(
         "This task ID already exists or is reserved by history.",
         409,
       );
+    if (/UNIQUE constraint failed: (families.slug|profiles.family_id)/.test(message))
+      throw new AppError(
+        "INVALID_VALUE",
+        "This route is already used. Choose another family route or profile suffix.",
+        409,
+      );
     const resource = resourceError(error);
     if (resource) throw resource;
     console.error(

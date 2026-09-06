@@ -18,6 +18,9 @@
 * {
   box-sizing: border-box;
 }
+[hidden] {
+  display: none !important;
+}
 body {
   margin: 0;
 }
@@ -344,6 +347,31 @@ small {
   border-collapse: collapse;
   width: 100%;
   font-size: 13px;
+}
+.configuration-context {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  overflow-wrap: anywhere;
+}
+.route-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+.route-detail code {
+  overflow-wrap: anywhere;
+}
+.route-detail small {
+  flex-basis: 100%;
+}
+.configuration-actions {
+  min-width: 175px;
+}
+.configuration-actions button {
+  margin: 0 5px 6px 0;
 }
 .data-table th,
 .data-table td {
