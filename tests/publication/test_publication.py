@@ -8,7 +8,7 @@ from unittest.mock import patch
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
-from publication_audit import audit_archive, audit_history, private_path, scan_content, source_manifest
+from publication_audit import audit_archive, audit_history, git, private_path, scan_content, source_manifest
 from package_release import collect_files
 
 
@@ -40,13 +40,13 @@ class PublicationTests(unittest.TestCase):
         self.assertTrue(scan_content("config.json", json.dumps({"account_id": identifier}).encode()))
         self.assertFalse(scan_content("config.json", json.dumps({"account_id": "YOUR_ACCOUNT_ID"}).encode()))
 
-    def test_history_checks_old_blobs_and_annotated_tag_identity(self):
+    def test_history_checks_old_blobs_and_tag_annotations(self):
         email = ("private-person" + "@" + "mail.invalid").encode()
         def fake_git(*args):
             if args[0] == "rev-list":
                 return b"current\nprevious\n"
             if args[0] == "show":
-                return b"Project <contributors@example.invalid>"
+                return b"Update deployment template"
             if args[0] == "ls-tree":
                 return b"100644 blob " + args[-1].encode() + b"\tconfig.txt\0"
             if args == ("cat-file", "blob", "current"):
@@ -56,7 +56,7 @@ class PublicationTests(unittest.TestCase):
             if args[0] == "for-each-ref":
                 return b"tag-id tag\n"
             if args == ("cat-file", "tag", "tag-id"):
-                return b"tagger " + email
+                return b"object current\ntype commit\ntag release\ntagger Project <contributors@example.invalid> 0 +0000\n\n" + email
             raise AssertionError(args)
         with patch("publication_audit.git", side_effect=fake_git):
             findings = audit_history()
@@ -100,6 +100,62 @@ class PublicationTests(unittest.TestCase):
                 archive.writestr(".env", "secret=value")
                 archive.writestr("screenshot.png", b"\x89PNG\x00")
             self.assertEqual({hit[2] for hit in audit_archive(path)}, {"private-file", "unreviewed-binary"})
+
+
+class HistoryTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.contributor = "Example Contributor"
+        self.email = "contributor" + "@" + "mail.invalid"
+        self.identifier = "f" * 32
+        self.git("init", "-q")
+        self.git("config", "user.name", self.contributor)
+        self.git("config", "user.email", self.email)
+        self.git("config", "commit.gpgsign", "false")
+        self.git("config", "tag.gpgsign", "false")
+        self.git("config", "core.hooksPath", str(self.root / "no-hooks"))
+        self.git("commit", "--allow-empty", "-qm", "Initial public source")
+
+    def git(self, *args):
+        return git(*args, root=self.root)
+
+    def audit(self, terms=()):
+        with patch("publication_audit.git", side_effect=self.git):
+            return audit_history(terms)
+
+    def test_contributor_identities_are_allowed_even_in_private_deny_lists(self):
+        self.git("tag", "-a", "release", "-m", "Public release")
+        self.assertEqual(self.audit([self.contributor, self.email]), [])
+
+    def test_commit_messages_and_tag_annotations_still_reject_sensitive_data(self):
+        cases = [
+            ("provider-token", "ghp_" + "a" * 36, []),
+            ("installation-host", "https://private-team." + "cloudflareaccess.com", []),
+            ("installation-id", json.dumps({"database_id": self.identifier}), []),
+            ("personal-email", json.dumps({"OWNER_EMAILS": self.email}), [self.email]),
+            ("private-deny-list", "deployment-secret-12345", ["deployment-secret-12345"]),
+        ]
+        for category, value, terms in cases:
+            with self.subTest(category=category):
+                self.git("commit", "--allow-empty", "-qm", value)
+                commit = self.git("rev-parse", "HEAD").decode().strip()
+                # A line resembling a tagger header inside the annotation is still data.
+                self.git("tag", "-a", category, "-m", "Release notes\n\ntagger " + value)
+                tag = self.git("rev-parse", "refs/tags/" + category).decode().strip()
+                findings = self.audit(terms)
+                self.assertIn(("history/" + commit[:12] + "/message", 1, category), findings)
+                self.assertIn(("history/tag/" + tag[:12], 8, category), findings)
+                self.assertNotIn(value, repr(findings))
+
+    def test_detached_head_files_are_checked(self):
+        self.git("checkout", "--detach", "-q")
+        (self.root / "deployment.json").write_text(json.dumps({"account_id": self.identifier}), encoding="utf-8")
+        self.git("add", "deployment.json")
+        self.git("commit", "-qm", "Detached CI change")
+        commit = self.git("rev-parse", "HEAD").decode().strip()
+        self.assertIn(("history/" + commit[:12] + "/deployment.json", 1, "installation-id"), self.audit())
 
 
 if __name__ == "__main__":

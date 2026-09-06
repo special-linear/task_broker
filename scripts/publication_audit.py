@@ -122,10 +122,11 @@ def audit_source(root=ROOT, terms=()):
 def audit_history(terms=()):
     findings, seen = [], set()
     # Tool-internal refs and reflogs are local recovery state, not publication refs.
-    # Inspect all branches (including remote tracking refs) and tags, not only HEAD.
-    for commit in git("rev-list", "--branches", "--tags", "--remotes").decode().splitlines():
-        metadata = git("show", "-s", "--format=%an <%ae>%n%cn <%ce>%n%B", commit)
-        findings.extend(scan_content("history/" + commit[:12] + "/metadata", metadata, terms))
+    # Include detached CI checkouts as well as branches, remote tracking refs and tags.
+    for commit in git("rev-list", "HEAD", "--branches", "--tags", "--remotes").decode().splitlines():
+        # Contributor names/emails are public attribution; messages can still leak data.
+        message = git("show", "-s", "--format=%B", commit)
+        findings.extend(scan_content("history/" + commit[:12] + "/message", message, terms))
         for entry in git("ls-tree", "-rz", commit).split(b"\0"):
             if not entry:
                 continue
@@ -140,11 +141,14 @@ def audit_history(terms=()):
             else:
                 hits = scan_content(name, git("cat-file", "blob", blob), terms)
             findings.extend(("history/" + commit[:12] + "/" + p, line, category) for p, line, category in hits)
-    # Tag annotations may carry a separate identity even when commits are clean.
+    # Preserve tag headers/messages for scanning, excluding only the tagger identity.
     for tag in git("for-each-ref", "--format=%(objectname) %(objecttype)", "refs/tags").decode().splitlines():
         oid, kind = tag.split()
         if kind == "tag":
-            findings.extend(scan_content("history/tag/" + oid[:12], git("cat-file", "tag", oid), terms))
+            headers, separator, message = git("cat-file", "tag", oid).partition(b"\n\n")
+            # Keep line numbers intact and never strip tagger-like lines in the message.
+            headers = b"\n".join(b"" if line.startswith(b"tagger ") else line for line in headers.split(b"\n"))
+            findings.extend(scan_content("history/tag/" + oid[:12], headers + separator + message, terms))
     return findings
 
 

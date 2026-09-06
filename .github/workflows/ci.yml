@@ -9,14 +9,14 @@ jobs:
       PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
       WRANGLER_SEND_METRICS: "false"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - run: npm ci
@@ -35,7 +35,7 @@ jobs:
           for attempt in $(seq 1 60); do curl --fail --silent http://127.0.0.1:8787/healthz && break; sleep 1; done
           npm run test:browser
       - run: python scripts/package_release.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: release-candidate
           path: release/
