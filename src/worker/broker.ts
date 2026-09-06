@@ -354,7 +354,9 @@ export async function reportOrRenew(c: Context, renew = false): Promise<unknown>
       let value: Row = {};
       if (!p.success) {
         error = "INVALID_VALUE";
-        message = p.error.issues.map((e) => e.message).join("; ");
+        message = p.error.issues
+          .map((e) => `${e.path.length ? `${e.path.join(".")}: ` : ""}${e.message}`)
+          .join("; ");
       } else {
         value = p.data as Row;
         if (
@@ -410,7 +412,7 @@ export async function reportOrRenew(c: Context, renew = false): Promise<unknown>
     r.statements.push(
       stmt(
         db,
-        `INSERT INTO request_items(request_uid,ordinal,item_id,attempt_id,value_json,error_code) SELECT ?,json_extract(value,'$.ordinal'),json_extract(value,'$.item_id'),json_extract(value,'$.attempt_id'),json_extract(value,'$.value'),json_extract(value,'$.error') FROM json_each(?)`,
+        `INSERT INTO request_items(request_uid,ordinal,item_id,attempt_id,value_json,error_code,response_json) SELECT ?,json_extract(value,'$.ordinal'),json_extract(value,'$.item_id'),json_extract(value,'$.attempt_id'),json_extract(value,'$.value'),json_extract(value,'$.error'),json_object('error_message',json_extract(value,'$.message')) FROM json_each(?)`,
         r.uid,
         json(staged),
       ),
@@ -515,7 +517,7 @@ export async function reportOrRenew(c: Context, renew = false): Promise<unknown>
     r.statements.push(
       stmt(
         db,
-        `UPDATE request_items SET response_json=json_object('item_id',item_id,'task_id',json_extract(value_json,'$.task_id'),'attempt_id',attempt_id,'status',status,'error_code',error_code,'outcome',(SELECT outcome FROM attempts WHERE id=attempt_id),'finalized_at',(SELECT finalized_at FROM attempts WHERE id=attempt_id),'late',(SELECT late FROM attempts WHERE id=attempt_id),'expires_at',(SELECT expires_at FROM attempts WHERE id=attempt_id),'maximum_expires_at',(SELECT maximum_expires_at FROM attempts WHERE id=attempt_id)) WHERE request_uid=?`,
+        `UPDATE request_items SET response_json=json_object('item_id',item_id,'task_id',json_extract(value_json,'$.task_id'),'attempt_id',attempt_id,'status',status,'error_code',error_code,'error_message',json_extract(response_json,'$.error_message'),'outcome',(SELECT outcome FROM attempts WHERE id=attempt_id),'finalized_at',(SELECT finalized_at FROM attempts WHERE id=attempt_id),'late',(SELECT late FROM attempts WHERE id=attempt_id),'expires_at',(SELECT expires_at FROM attempts WHERE id=attempt_id),'maximum_expires_at',(SELECT maximum_expires_at FROM attempts WHERE id=attempt_id)) WHERE request_uid=?`,
         r.uid,
       ),
     );
@@ -530,7 +532,7 @@ export async function reportOrRenew(c: Context, renew = false): Promise<unknown>
         attempt_id: v.attempt_id,
         status: v.status,
         ...(v.error_code
-          ? { error: { code: v.error_code, message: itemError(v.error_code) } }
+          ? { error: { code: v.error_code, message: v.error_message ?? itemError(v.error_code) } }
           : renew
             ? {
                 expires_at: iso(v.expires_at),

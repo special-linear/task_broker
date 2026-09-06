@@ -32,7 +32,7 @@ beforeAll(async () => {
   await applyD1Migrations(env.DB, env.TEST_MIGRATIONS);
   expect((await admin("/bootstrap", meta())).ok).toBe(true);
 });
-async function fixture(count = 1) {
+async function fixture(count = 1, resultType = "integer", resultPointer = "/diameter") {
   const slug = `test-${crypto.randomUUID().slice(0, 8)}`;
   const family = await admin("/families", {
     ...meta(),
@@ -49,9 +49,9 @@ async function fixture(count = 1) {
       {
         key: "diameter",
         label: "Diameter",
-        type: "integer",
+        type: resultType,
         kind: "result",
-        pointer: "/diameter",
+        pointer: resultPointer,
       },
     ],
   });
@@ -106,6 +106,8 @@ test("UI-01/UI-02/PY flow: create, claim, immutable replay, report, grid result"
         instance_epoch: t.instance_epoch,
         outcome: "success",
         result: { diameter: 42 },
+        runtime_seconds: 0.0123456789,
+        runtime_origin: "received",
       },
     ],
   });
@@ -115,6 +117,113 @@ test("UI-01/UI-02/PY flow: create, claim, immutable replay, report, grid result"
   expect(rows.ok, JSON.stringify(rows)).toBe(true);
   expect(rows.data.rows[0].status).toBe("completed");
   expect(rows.data.rows[0].result).toEqual({ diameter: 42 });
+  const history = await admin(`/tasks/${f.tasks[0].task_uid}/attempts`);
+  expect(history.data.attempts[0].runtime_seconds).toBe(0.0123456789);
+  expect(history.data.attempts[0].runtime_origin).toBe("received");
+});
+test.each(["report", "renew"])(
+  "%s validation identifies the malformed field and preserves the error on replay",
+  async (endpoint) => {
+    const f = await fixture();
+    const grant = await compute(f.key, "/claim", { ...meta(), pool: f.slug, worker_id: "w" });
+    const t = grant.data.tasks[0];
+    const field = endpoint === "report" ? "runtime_seconds" : "lease_seconds";
+    const item = {
+      item_id: "invalid",
+      task_id: t.task_id,
+      attempt_id: t.attempt_id,
+      lease_token: t.lease_token,
+      lease_generation: t.lease_generation,
+      instance_epoch: t.instance_epoch,
+      ...(endpoint === "report" ? { outcome: "success", result: { diameter: 4 } } : {}),
+      [field]: "not-a-number",
+    };
+    const body = { ...meta(), pool: f.slug, worker_id: "w", items: [item] };
+    const rejected = await compute(f.key, `/${endpoint}`, body);
+    expect(rejected.ok, JSON.stringify(rejected)).toBe(true);
+    expect(rejected.data.items[0]).toMatchObject({
+      status: "rejected",
+      error: { code: "INVALID_VALUE", message: expect.stringContaining(`${field}:`) },
+    });
+    expect(rejected.data.items[0].error.message).toContain("expected number");
+    expect(JSON.stringify(rejected)).not.toContain(t.lease_token);
+    expect((await compute(f.key, `/${endpoint}`, body)).data).toEqual(rejected.data);
+    const recovered = await compute(f.key, "/recover", { pool: f.slug, worker_id: "w" });
+    expect(recovered.data.tasks[0].attempt_id).toBe(t.attempt_id);
+    const corrected = await compute(f.key, `/${endpoint}`, {
+      ...body,
+      ...meta(),
+      items: [{ ...item, item_id: "corrected", [field]: endpoint === "report" ? 0.125 : 7200 }],
+    });
+    expect(corrected.data.items[0].status, JSON.stringify(corrected)).toBe("applied");
+  },
+);
+test("result type errors retain the column name and required type", async () => {
+  const f = await fixture(1, "string");
+  const grant = await compute(f.key, "/claim", { ...meta(), pool: f.slug, worker_id: "w" });
+  const t = grant.data.tasks[0];
+  const item = {
+    item_id: "invalid-result",
+    task_id: t.task_id,
+    attempt_id: t.attempt_id,
+    lease_token: t.lease_token,
+    lease_generation: t.lease_generation,
+    instance_epoch: t.instance_epoch,
+    outcome: "success",
+    result: { diameter: 4 },
+    runtime_seconds: 0.0123456789,
+    runtime_origin: "received",
+  };
+  const body = { ...meta(), pool: f.slug, worker_id: "w", items: [item] };
+  const rejected = await compute(f.key, "/report", body);
+  expect(rejected.ok, JSON.stringify(rejected)).toBe(true);
+  expect(rejected.data.items[0]).toMatchObject({
+    status: "rejected",
+    error: { code: "INVALID_VALUE", message: "Diameter must be text." },
+  });
+  expect((await compute(f.key, "/report", body)).data).toEqual(rejected.data);
+  expect(JSON.stringify(rejected)).not.toContain(t.lease_token);
+  const corrected = await compute(f.key, "/report", {
+    ...body,
+    ...meta(),
+    items: [{ ...item, item_id: "corrected-result", result: { diameter: "4" } }],
+  });
+  expect(corrected.data.items[0].status, JSON.stringify(corrected)).toBe("applied");
+  const history = await admin(`/tasks/${f.tasks[0].task_uid}/attempts`);
+  expect(history.data.attempts).toHaveLength(1);
+  expect(history.data.attempts[0].result).toEqual({ diameter: "4" });
+});
+test("a blank result pointer validates the whole result against the integer column", async () => {
+  const f = await fixture(1, "integer", "");
+  const grant = await compute(f.key, "/claim", { ...meta(), pool: f.slug, worker_id: "w" });
+  const t = grant.data.tasks[0];
+  const item = {
+    item_id: "object-result",
+    task_id: t.task_id,
+    attempt_id: t.attempt_id,
+    lease_token: t.lease_token,
+    lease_generation: t.lease_generation,
+    instance_epoch: t.instance_epoch,
+    outcome: "success",
+    result: { diameter: 4 },
+    runtime_seconds: 0.0123456789,
+    runtime_origin: "received",
+  };
+  const body = { ...meta(), pool: f.slug, worker_id: "w", items: [item] };
+  const rejected = await compute(f.key, "/report", body);
+  expect(rejected.ok, JSON.stringify(rejected)).toBe(true);
+  expect(rejected.data.items[0]).toMatchObject({
+    status: "rejected",
+    error: { code: "INVALID_VALUE", message: "Diameter requires an integer." },
+  });
+  const corrected = await compute(f.key, "/report", {
+    ...body,
+    ...meta(),
+    items: [{ ...item, item_id: "scalar-result", result: 4 }],
+  });
+  expect(corrected.data.items[0].status, JSON.stringify(corrected)).toBe("applied");
+  const rows = await admin(`/pools/${f.pool}/tasks`);
+  expect(rows.data.rows[0].result).toEqual({ diameter: 4 });
 });
 test("DB-01/DB-02: concurrent claims and identical requests grant once", async () => {
   const f = await fixture(5),

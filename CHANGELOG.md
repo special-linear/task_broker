@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New result columns default to the matching object property (for example, `/diameter`); the editor shows the mapping and explains that a blank pointer selects the whole result. Existing explicit mappings are preserved.
+- Report and renewal validation errors preserve the invalid field or result-column reason, including on replay, so Python exceptions explain what needs correcting.
 - Family/pool/profile context, complete copyable worker routes and a family default selector in configuration screens; choose the initial profile suffix during pool creation.
 - Reviewed deletion of unused configuration, with transactional dependency checks and retained audit history; archive/restore for families, pools and profiles, with archived items hidden by default.
 - Stable multi-column table sorting, saved-view compatibility and cancellable All rows loading with local reordering after completion.

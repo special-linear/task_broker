@@ -24,6 +24,130 @@ const row = (page: Page, title: string, name: string) =>
     .getByRole("row")
     .filter({ has: page.getByRole("textbox", { name: `${name} name`, exact: true }) });
 
+test("a result column created in the editor maps the matching object property", async ({
+  page,
+  request,
+}) => {
+  await admin(request, "/bootstrap", meta());
+  const slug = `mapping-${crypto.randomUUID().slice(0, 8)}`;
+  await page.goto("/admin/pools");
+  await page.getByRole("main").getByRole("button", { name: "+ Create pool", exact: true }).click();
+  const d = page.getByRole("dialog");
+  await d.getByRole("combobox", { name: "Family", exact: true }).selectOption("new");
+  await d.getByLabel("New family name").fill(slug);
+  await d.getByLabel("New family route").fill(slug);
+  await d.getByLabel("Pool name", { exact: true }).fill(slug);
+  await d.getByLabel("Worker route suffix").fill("diameters");
+  await d.getByRole("button", { name: "+ Add column" }).click();
+  const column = d.locator(".fields-list > .panel").last();
+  await column.getByLabel("Field key", { exact: true }).fill("diameter");
+  await column.getByLabel("Field type", { exact: true }).selectOption("integer");
+  await column.getByLabel("Field kind", { exact: true }).selectOption("result");
+  const pointer = column.getByLabel("Result JSON Pointer", { exact: true });
+  await expect(pointer).toBeVisible();
+  await expect(pointer).toHaveValue("/diameter");
+  await column.getByLabel("Field key", { exact: true }).fill("a/b~c");
+  await expect(pointer).toHaveValue("/a~1b~0c");
+  await column.getByLabel("Field key", { exact: true }).fill("diameter");
+  await d.getByRole("button", { name: "Create pool", exact: true }).click();
+  await expect(d).toHaveCount(0);
+  const family = (await admin(request, "/families")).rows.find((f: any) => f.slug === slug);
+  const pool = (await admin(request, `/pools?family_id=${family.id}`)).rows[0];
+  const fields = (await admin(request, `/pools/${pool.id}/fields`)).fields;
+  expect(fields.find((f: any) => f.key === "diameter")).toMatchObject({
+    type: "integer",
+    kind: "result",
+    pointer: "/diameter",
+  });
+  await admin(request, `/pools/${pool.id}/tasks`, { ...meta(), data: { n: 2 } });
+  const key = await admin(request, "/keys", { ...meta(), family_id: family.id, label: "mapping" });
+  const compute = async (path: string, body: unknown) => {
+    const response = await request.post(`/api/v1/${path}`, {
+      headers: { Authorization: `Bearer ${key.key}` },
+      data: body,
+    });
+    const result = await response.json();
+    expect(result.ok, JSON.stringify(result)).toBe(true);
+    return result.data;
+  };
+  const envelope = { pool: `${slug}/diameters`, worker_id: "mapping-test" };
+  const t = (await compute("claim", { ...meta(), ...envelope })).tasks[0];
+  const report = await compute("report", {
+    ...meta(),
+    ...envelope,
+    items: [
+      {
+        item_id: "result",
+        task_id: t.task_id,
+        attempt_id: t.attempt_id,
+        lease_token: t.lease_token,
+        lease_generation: t.lease_generation,
+        instance_epoch: t.instance_epoch,
+        outcome: "success",
+        result: { diameter: Number(t.data.n) ** 2 },
+        runtime_seconds: 0.0123456789,
+        runtime_origin: "received",
+      },
+    ],
+  });
+  expect(report.items[0].status, JSON.stringify(report)).toBe("applied");
+  const tasks = await admin(request, `/pools/${pool.id}/tasks`);
+  expect(tasks.rows[0].result).toEqual({ diameter: 4 });
+});
+
+test("editing fields preserves explicit blank and custom result pointers", async ({
+  page,
+  request,
+}) => {
+  await admin(request, "/bootstrap", meta());
+  const slug = `pointers-${crypto.randomUUID().slice(0, 8)}`;
+  const family = await admin(request, "/families", { ...meta(), slug, name: slug });
+  const pool = await admin(request, "/pools", {
+    ...meta(),
+    family_id: family.id,
+    name: slug,
+    fields: [
+      { key: "whole", label: "Whole", type: "json", kind: "result", pointer: "" },
+      {
+        key: "nested",
+        label: "Nested",
+        type: "integer",
+        kind: "result",
+        pointer: "/metrics/value",
+      },
+    ],
+  });
+  await page.goto("/admin/pools");
+  await row(page, "Physical pools", slug)
+    .getByRole("button", { name: "Columns", exact: true })
+    .click();
+  const d = page.getByRole("dialog");
+  const columns = d.locator(".fields-list > .panel");
+  await expect(columns.nth(0).getByLabel("Result JSON Pointer")).toBeVisible();
+  await expect(columns.nth(0).getByLabel("Result JSON Pointer")).toHaveValue("");
+  await columns.nth(0).getByLabel("Field key", { exact: true }).fill("renamed_whole");
+  await columns.nth(1).getByLabel("Field key", { exact: true }).fill("renamed_nested");
+  await expect(columns.nth(0).getByLabel("Result JSON Pointer")).toHaveValue("");
+  await expect(columns.nth(1).getByLabel("Result JSON Pointer")).toHaveValue("/metrics/value");
+  await d.getByRole("button", { name: "+ Add column" }).click();
+  const added = columns.last();
+  await added.getByLabel("Field key", { exact: true }).fill("manual");
+  await added.getByLabel("Field kind", { exact: true }).selectOption("result");
+  await added.getByLabel("Result JSON Pointer").fill("");
+  await added.getByLabel("Field key", { exact: true }).fill("manual_root");
+  await expect(added.getByLabel("Result JSON Pointer")).toHaveValue("");
+  const previewRequest = page.waitForRequest((r) =>
+    r.url().endsWith(`/pools/${pool.id}/fields/preview`),
+  );
+  await d.getByRole("button", { name: "Preview schema change" }).click();
+  expect((await previewRequest).postDataJSON().fields.map((f: any) => f.pointer)).toEqual([
+    "",
+    "/metrics/value",
+    "",
+  ]);
+  await expect(page.getByRole("dialog", { name: "Review schema changes" })).toBeVisible();
+});
+
 test("pool creation exposes routes and relationships, defaults and archive/restore", async ({
   page,
   request,

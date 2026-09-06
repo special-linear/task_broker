@@ -21,6 +21,14 @@ Task methods are `complete(result, runtime=None)`, `release(note=None, details=N
 
 Runtime is measured with a monotonic clock from receipt/recovery, not wall-clock timestamps. An explicit completion runtime overrides that measurement. Recovery marks the runtime origin as recovered.
 
+## Validation errors
+
+When `complete()`, `release()`, `fail()` or `renew()` raises `ValidationError`, its message identifies the invalid field or result column. For example, `Diameter must be text.` means the issued result contract expects a string, while `runtime_seconds: ... expected number ...` identifies malformed runtime metadata. Inspect `error.code` and `str(error)` when catching the exception. Older server versions return only `Correct the malformed item fields.`; deploy the updated Worker to obtain specific messages for new requests.
+
+Result values must match the column types captured when the task was claimed. The example above sends an integer diameter; a text column expects a string such as `{"diameter": "49"}`. A rejected item does not complete the task, so you can correct the value and call `complete()` again on the same task while its lease remains authorized. The client uses a new request identity. Changing a column definition does not change an existing attempt's result contract. An `UncertainOperation` requires the separate retry/recovery procedure below.
+
+The result column's JSON Pointer must also match the returned shape. Use `/diameter` for `complete({"diameter": 49})`. A blank pointer selects the whole result, so an integer column with a blank pointer expects `complete(49)`. Supplying the object in that case raises `Diameter requires an integer.` even though its `diameter` property is an integer. The editor defaults new result columns to their matching property; update existing unintended blank mappings explicitly for future claims.
+
 ## Ordered claims
 
 ```python

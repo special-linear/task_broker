@@ -48,6 +48,8 @@ All mode suspends live polling and restores your prior polling setting when you 
 
 Input columns support string, integer, number, Boolean, ISO datetime and JSON. Result columns map scalar or JSON values from the returned result using JSON Pointer, such as `/metrics/diameter`; escape `~` as `~0` and `/` as `~1`. Results are checked against the contract issued with the attempt, even if later configuration changes.
 
+The editor fills in `/diameter` for a new result column named `diameter`, so `task.complete({"diameter": 4})` maps the integer `4` to that column. The mapping is visible beside the column settings. A blank pointer selects the entire result: an integer column with a blank pointer expects `task.complete(4)` and rejects `task.complete({"diameter": 4})` because the latter supplies an object. Existing mappings remain unchanged when you open the editor. Correct an unintended blank pointer to `/diameter` for future claims; already claimed tasks retain their original mapping.
+
 Missing fields and explicit `null` are distinct. Empty strings are legitimate strings and count as blank in filters. Boolean false and numeric zero are not blank. Integers beyond ±9,007,199,254,740,991 must be decimal strings in JSON; filtering and sorting compare them exactly. Use string columns for codes whose leading zeros matter. Unsafe unquoted integer literals are rejected before JavaScript can round them.
 
 The builder and expression editor use the same grammar:

@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).parents[2] / "python"))
-from task_pool import TaskClient, Task, TaskError, UncertainOperation, PendingOperation, _safe
+from task_pool import TaskClient, Task, TaskError, ValidationError, UncertainOperation, PendingOperation, _safe
 
 class ClientTests(unittest.TestCase):
     def test_claim_sort_serialization_and_uncertain_replay(self):
@@ -82,6 +82,26 @@ class ClientTests(unittest.TestCase):
                 with self.assertRaises(TaskError):
                     client.claim()
                 self.assertEqual(call.call_count,1)
+
+    def test_rejected_result_exposes_reason_and_can_be_corrected(self):
+        client = self.client()
+        task = Task(client, {"task_id":"t", "attempt_id":"a", "lease_token":"s", "lease_generation":1, "instance_epoch":"e", "data":{}, "tags":[]})
+        sent = []
+        def transport(endpoint, body, timeout):
+            sent.append(json.loads(body))
+            result = ({"status": "rejected", "error": {"code": "INVALID_VALUE", "message": "Diameter must be text."}}
+                      if len(sent) == 1 else {"status": "applied"})
+            return 200, {}, json.dumps({"ok": True, "data": {"items": [result]}}).encode()
+        with patch.object(client, "_transport", side_effect=transport):
+            with self.assertRaisesRegex(ValidationError, "Diameter must be text") as raised:
+                task.complete({"diameter": 4})
+            self.assertEqual(raised.exception.code, "INVALID_VALUE")
+            self.assertEqual(len(sent), 1)
+            self.assertIsNone(task.pending)
+            self.assertEqual(task.complete({"diameter": "4"})["status"], "applied")
+        self.assertEqual(sent[0]["items"][0]["attempt_id"], sent[1]["items"][0]["attempt_id"])
+        self.assertNotEqual(sent[0]["request_id"], sent[1]["request_id"])
+        self.assertNotEqual(sent[0]["items"][0]["item_id"], sent[1]["items"][0]["item_id"])
 
 
     def test_process_recovery_preserves_prepared_runtime_and_changed_outcome_identity(self):

@@ -67,8 +67,34 @@ function fieldsEditor(initial: Partial<Field>[] = []) {
         value: f.pointer ?? "",
         placeholder: "/metrics/value",
       }),
+      mapping = el(
+        "div",
+        {},
+        labeled("Result JSON Pointer", pointer),
+        el(
+          "p",
+          { class: "input-note" },
+          'For {"diameter": 4}, use /diameter. Leave blank only when the worker returns the value directly.',
+        ),
+      ),
       node = el("div", { class: "panel", style: "padding:12px;margin:0" });
     type.setAttribute("aria-label", "Field type");
+    kind.setAttribute("aria-label", "Field kind");
+    // Existing mappings (including the blank root pointer) stay explicit.
+    let automaticPointer = f.pointer === undefined;
+    const updateMapping = () => {
+      mapping.hidden = kind.value !== "result";
+      if (automaticPointer)
+        pointer.value = key.value
+          ? `/${key.value.replaceAll("~", "~0").replaceAll("/", "~1")}`
+          : "";
+    };
+    key.addEventListener("input", updateMapping);
+    kind.addEventListener("change", updateMapping);
+    pointer.addEventListener("input", () => {
+      automaticPointer = false;
+    });
+    updateMapping();
     const row = {
       node,
       key,
@@ -95,6 +121,7 @@ function fieldsEditor(initial: Partial<Field>[] = []) {
           node.remove();
         }),
       ),
+      mapping,
       el(
         "details",
         {},
@@ -105,7 +132,6 @@ function fieldsEditor(initial: Partial<Field>[] = []) {
           labeled("Required", required),
           labeled("Nullable", nullable),
           labeled("Default at creation", defaultInput),
-          labeled("Result JSON Pointer", pointer),
         ),
         button("Move up", () => {
           const ix = rows.indexOf(row);
