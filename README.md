@@ -1,5 +1,7 @@
 # Cloudflare Task Broker
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fspecial-linear%2Ftask_broker)
+
 A browser task workspace, transactional D1 lease broker, and dependency-free Python client. Computation runs on your machines. The Worker stores typed tasks, leases, results, immutable attempts, reviewed operations, and shared views.
 
 **Release candidate.** See [verification evidence and remaining gates](docs/verification.md) before treating this build as production ready. Free staging is the default; no paid subscription is selected by the application.
@@ -55,7 +57,7 @@ npm run check:deployment -- --env staging
 npm run deploy:staging
 ```
 
-The public deployment button belongs to **this source repository**, as do downloadable releases. Once its GitHub URL is chosen, `node scripts/deploy-link.mjs https://github.com/OWNER/REPOSITORY` prints the deploy and release URLs. A separate template repository is unnecessary.
+The **Deploy to Cloudflare** button above starts a new installation from [this source repository](https://github.com/special-linear/task_broker). Follow the [installation guide](docs/installation.md) to configure addresses, Access and secrets. An existing installation can continue using its current configuration. Downloadable releases belong to the same repository's [Releases page](https://github.com/special-linear/task_broker/releases). To generate a button for a fork, run `node scripts/deploy-link.mjs https://github.com/OWNER/REPOSITORY` and paste the first output line into its README.
 
 - [Browser manual](docs/user-guide.md): editing, filters, import/export, views, operations.
 - [Architecture and invariants](docs/architecture.md): transactions, fencing, revision checks, budgets.
