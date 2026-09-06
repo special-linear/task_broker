@@ -1,3 +1,4 @@
+import { physicalIndexName } from "./sort-indexes";
 import { recordDto, importedRecord } from "./presentation";
 import { z } from "zod";
 import { assert, json, policySchema, validate, VERSION } from "../shared/core";
@@ -8,6 +9,7 @@ const TABLES = [
   "families",
   "pools",
   "pool_fields",
+  "claim_sort_indexes",
   "schema_versions",
   "profiles",
   "profile_aliases",
@@ -93,7 +95,7 @@ export async function portableImportPreview(c: Context) {
             .object({
               format: z.literal("task-broker-portable"),
               format_version: z.literal(1),
-              schema_version: z.number().int().min(1).max(3),
+              schema_version: z.number().int().min(1).max(4),
             })
             .passthrough(),
           total_records: z.number().int().nonnegative(),
@@ -211,6 +213,11 @@ export async function portableImportChunk(c: Context, id: string) {
         assert(columns.includes(key), "INVALID_VALUE", `Unknown imported field ${key}.`);
       if (["families", "profiles", "pools"].includes(body.table)) row.enabled = 0;
       if (body.table === "pools") row.migration_status = "ready";
+      if (body.table === "claim_sort_indexes") {
+        row.status = "unbuilt";
+        row.built_at = null;
+        row.index_name = physicalIndexName(row.id);
+      }
       if (body.table === "tasks") {
         row.latest_attempt_id = null;
         row.lease_generation = Number(row.lease_generation) + 1;
@@ -254,6 +261,14 @@ export async function portableImportChunk(c: Context, id: string) {
           c.env.DB,
           `INSERT INTO ${body.table}(${used.map((k) => `"${k}"`).join(",")}) SELECT ${used.map((k) => `json_extract(value,'$.${k}')`).join(",")} FROM json_each(?)`,
           json(rows),
+        ),
+      );
+    if (body.table === "claim_sort_indexes")
+      r.statements.push(
+        stmt(
+          c.env.DB,
+          "UPDATE requests SET guard_config=NOT EXISTS(SELECT 1 FROM claim_sort_indexes GROUP BY pool_id HAVING count(*)>4) WHERE uid=?",
+          r.uid,
         ),
       );
     r.statements.push(

@@ -1,3 +1,5 @@
+import { resolveSorts, sortOrder, sortProjection } from "../shared/sort";
+import { sortResolver } from "./sorting";
 import {
   AppError,
   assert,
@@ -147,22 +149,36 @@ export async function claim(c: Context): Promise<unknown> {
       AND NOT EXISTS(SELECT 1 FROM (${effectiveHeads(time, epoch)}) active WHERE active.task_uid=t.task_uid)
       AND (${mandatory.sql}) AND (${requested.sql})`;
     const scopeJoins = `JOIN pools po ON po.id=t.pool_id JOIN profiles p ON p.id=${sqlString(profile.id)} JOIN families f ON f.id=p.family_id`;
+    const sorts = resolveSorts(
+      body.sorts ?? [],
+      sortResolver(fields, profile.id, JSON.parse(profile.filter_allowlist_json), "t", time, epoch),
+    );
+    const customOrder = sorts.length
+      ? sortOrder(sorts, "t.task_id COLLATE BINARY,t.task_uid")
+      : "t.task_id COLLATE BINARY,t.task_uid";
+    const sortColumns = sorts.length ? "," + sortProjection(sorts) : "";
+    const chosenOrder = sorts.length
+      ? sortOrder(
+          sorts.map((s, i) => ({ ...s, expression: `ch.sort_${i}` })),
+          "ch.task_id COLLATE BINARY,ch.task_uid",
+        )
+      : "ch.task_id COLLATE BINARY,ch.task_uid";
     // Filter placeholders are numbered first. Other values are fixed trusted literals or JSON binds.
     r.statements.push(
       stmt(
         db,
         `WITH fresh AS MATERIALIZED (
-      SELECT t.task_uid,t.task_id,0 priority,NULL last_grant_at,COALESCE(ps.attempts,0) profile_attempts
-      FROM tasks t INDEXED BY tasks_schedule ${scopeJoins} LEFT JOIN task_profile_state ps ON ps.task_uid=t.task_uid AND ps.profile_id=p.id
+      SELECT t.task_uid,t.task_id,0 priority,NULL last_grant_at,COALESCE(ps.attempts,0) profile_attempts${sortColumns}
+      FROM tasks t ${sorts.length ? "" : "INDEXED BY tasks_schedule"} ${scopeJoins} LEFT JOIN task_profile_state ps ON ps.task_uid=t.task_uid AND ps.profile_id=p.id
       WHERE COALESCE(ps.lifetime_attempts,0)=0 AND ${eligibility}
-      ORDER BY t.task_id COLLATE BINARY,t.task_uid LIMIT ${grantLimit}
+      ORDER BY ${customOrder} LIMIT ${grantLimit}
     ), retried AS MATERIALIZED (
-      SELECT t.task_uid,t.task_id,1 priority,ps.last_grant_at,ps.attempts profile_attempts
+      SELECT t.task_uid,t.task_id,1 priority,ps.last_grant_at,ps.attempts profile_attempts${sortColumns}
       FROM task_profile_state ps INDEXED BY profile_schedule JOIN tasks t ON t.task_uid=ps.task_uid ${scopeJoins}
       WHERE ps.profile_id=${sqlString(profile.id)} AND ps.permanent_failure=0 AND ps.lifetime_attempts>0 AND ${eligibility}
-      ORDER BY ps.last_grant_at,t.task_id COLLATE BINARY,t.task_uid LIMIT max(0,${grantLimit}-(SELECT COUNT(*) FROM fresh))
+      ORDER BY ps.last_grant_at,${customOrder} LIMIT max(0,${grantLimit}-(SELECT COUNT(*) FROM fresh))
     ), chosen AS MATERIALIZED (SELECT * FROM fresh UNION ALL SELECT * FROM retried),
-    candidates AS (SELECT t.*,ch.profile_attempts,${projection} returned_data,row_number() OVER(ORDER BY ch.priority,ch.last_grant_at,ch.task_id COLLATE BINARY,ch.task_uid)-1 ordinal FROM chosen ch JOIN tasks t ON t.task_uid=ch.task_uid),
+    candidates AS (SELECT t.*,ch.profile_attempts,${projection} returned_data,row_number() OVER(ORDER BY ch.priority,ch.last_grant_at,${chosenOrder})-1 ordinal FROM chosen ch JOIN tasks t ON t.task_uid=ch.task_uid),
     sized AS (SELECT *,sum(length(CAST(returned_data AS BLOB))+length(CAST(tags_json AS BLOB))+1200) OVER(ORDER BY ordinal) response_size FROM candidates)
     UPDATE requests SET metadata_json=json_set(metadata_json,'$.selection',json(COALESCE((SELECT json_group_array(json_object('ordinal',ordinal,'task_uid',task_uid,'attempt_id',json_extract(seed.value,'$.id'),'token',json_extract(seed.value,'$.token'),'returned_data',json(returned_data),'profile_attempts',profile_attempts+1,'attempts_total',attempts_total+1,'snapshot_id',task_uid||':'||input_revision,'initial_expiry',${time}+${duration * 1000},'fits',response_size<=${LIMITS.responseBytes - 2048})) FROM sized JOIN json_each(?${extra + 1}) seed ON CAST(seed.key AS INTEGER)=sized.ordinal),'[]'))) WHERE uid=${sqlString(r.uid)}`,
         ...mandatory.params,

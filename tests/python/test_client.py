@@ -8,6 +8,27 @@ sys.path.insert(0, str(Path(__file__).parents[2] / "python"))
 from task_pool import TaskClient, Task, TaskError, UncertainOperation, PendingOperation, _safe
 
 class ClientTests(unittest.TestCase):
+    def test_claim_sort_serialization_and_uncertain_replay(self):
+        client = self.client()
+        sent = []
+        def uncertain(operation):
+            sent.append(operation.body)
+            raise UncertainOperation(operation, "lost response")
+        client.retry = uncertain
+        with self.assertRaises(UncertainOperation):
+            client.claim(5, sort=[("A", "asc"), ("B", "desc")])
+        body = json.loads(sent[0])
+        self.assertEqual(body["sorts"], [{"field": "A", "direction": "asc"}, {"field": "B", "direction": "desc"}])
+        with self.assertRaises(UncertainOperation):
+            client.claim(5, sort=[("A", "asc"), ("B", "desc")])
+        self.assertEqual(sent[0], sent[1])
+        with self.assertRaises(UncertainOperation):
+            client.claim(5, sort=[("A", "desc")])
+        self.assertEqual(len(sent), 2)
+        for invalid in [[("A", "bad")], [("A", "asc"), ("a", "desc")], [(str(i), "asc") for i in range(9)]]:
+            with self.assertRaises(ValueError):
+                self.client().claim(sort=invalid)
+
     def client(self):
         return TaskClient("experiments", "http://127.0.0.1:8787", "test-key", worker_id="stable")
 

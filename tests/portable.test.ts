@@ -81,6 +81,15 @@ test("OPS-03/OPS-06: portable chunks preserve history, quarantine authority and 
     shared: true,
     presentation: { filter: "n > 2", columns: [], page_size: 50 },
   });
+  const sortIndex = await call(source, `/pools/${pool.id}/claim-sort-indexes`, {
+    ...meta(),
+    name: "Repeated order",
+    sorts: [{ field: "n", direction: "asc" }],
+  });
+  await call(source, `/claim-sort-indexes/${sortIndex.id}/build`, {
+    ...meta(),
+    expected_revision: 1,
+  });
   await call(source, "/maintenance", { ...meta(), maintenance: true });
   await call(target, "/maintenance", { ...meta(), maintenance: true });
   const manifest = await call(source, "/portable-export");
@@ -112,6 +121,17 @@ test("OPS-03/OPS-06: portable chunks preserve history, quarantine authority and 
   expect(progress.status).toBe("complete");
   expect(progress.processed).toBe(progress.total);
   const restored = (await call(target, `/tasks/${task.task_uid}`)).task;
+  const restoredIndex = (await call(target, `/pools/${pool.id}/claim-sort-indexes`)).rows[0];
+  expect(restoredIndex.status).toBe("unbuilt");
+  expect(restoredIndex.built_at).toBeNull();
+  expect(
+    (
+      await target
+        .prepare("SELECT name FROM sqlite_schema WHERE name=?")
+        .bind(restoredIndex.index_name)
+        .all()
+    ).results,
+  ).toEqual([]);
   expect(restored.task_id).toBe("permanent-id");
   expect(restored.data.n).toBe("9007199254740993");
   expect(restored.result.answer).toBe("9007199254740993");

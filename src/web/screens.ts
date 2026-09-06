@@ -293,6 +293,7 @@ export async function configurationScreen(
       if (table === "pools")
         actions.append(
           button("Columns", () => schemaDialog(row, refresh)),
+          button("Claim sort indexes", () => claimSortIndexes(row)),
           button(row.archived_at ? "Unarchive" : "Archive", async () => {
             await api(
               `/pools/${row.id}`,
@@ -392,7 +393,7 @@ function configForm(table: string, row: any, refresh: () => Promise<void>) {
     d.content.append(
       labeled("Mandatory filter", filter),
       labeled("Returned input keys", projection),
-      labeled("Allowed worker filter fields", allowlist),
+      labeled("Allowed worker filter/sort fields", allowlist),
     );
   d.content.append(
     errors,
@@ -886,4 +887,125 @@ export async function settingsScreen(main: HTMLElement, refresh: () => Promise<v
     ),
   );
   main.append(maintenance);
+}
+
+async function claimSortIndexes(pool: any) {
+  const d = dialog(`Claim sort indexes · ${pool.name}`),
+    fields = (await api(`/pools/${pool.id}/fields`)).fields as Field[];
+  const name = el("input", { "aria-label": "Index name", placeholder: "e.g. category then size" });
+  const fieldChoices = [
+    ...["task_id", "enabled", "admin_note", "attempts_total"].map((key) => ({
+      value: key,
+      label: key,
+    })),
+    ...fields
+      .filter((f) => f.active && f.kind === "input" && f.type !== "json")
+      .map((f) => ({ value: f.key, label: f.label })),
+  ];
+  const editor = el("div"),
+    rows: { node: HTMLElement; field: HTMLSelectElement; direction: HTMLSelectElement }[] = [];
+  function addField() {
+    if (rows.length >= 8) throw new Error("Up to eight fields are supported.");
+    const field = select(fieldChoices),
+      direction = select([
+        { value: "asc", label: "Ascending" },
+        { value: "desc", label: "Descending" },
+      ]);
+    field.setAttribute("aria-label", "Index sort field");
+    direction.setAttribute("aria-label", "Index sort direction");
+    const node = el("div", { class: "toolbar" }, field, direction),
+      row = { node, field, direction };
+    node.append(
+      button("Remove field", () => {
+        rows.splice(rows.indexOf(row), 1);
+        node.remove();
+      }),
+    );
+    rows.push(row);
+    editor.append(node);
+  }
+  const list = el("div");
+  async function refresh() {
+    const result = await api(`/pools/${pool.id}/claim-sort-indexes`);
+    list.replaceChildren();
+    for (const index of result.rows) {
+      const description = index.sorts
+        .map((s: any) => `${s.field} ${s.direction === "asc" ? "↑" : "↓"}`)
+        .join(" → ");
+      const panel = el(
+        "section",
+        { class: "panel" },
+        el("h3", {}, index.name),
+        el("p", {}, `${description} · ${index.status}`),
+      );
+      const actions = el("div", { class: "toolbar" });
+      if (index.status !== "invalid")
+        actions.append(
+          button(index.status === "ready" ? "Rebuild index" : "Build index", async () => {
+            await api(`/claim-sort-indexes/${index.id}/build`, {
+              ...operation(),
+              expected_revision: index.revision,
+            });
+            await refresh();
+          }),
+        );
+      actions.append(
+        button("Delete index", async () => {
+          await api(
+            `/claim-sort-indexes/${index.id}`,
+            { ...operation(), expected_revision: index.revision },
+            "DELETE",
+          );
+          await refresh();
+        }),
+      );
+      panel.append(
+        actions,
+        el(
+          "pre",
+          {},
+          `client.claim(20, sort=[${index.sorts.map((s: any) => `(${JSON.stringify(s.field)}, ${JSON.stringify(s.direction)})`).join(", ")}])`,
+        ),
+      );
+      if (index.status === "invalid")
+        panel.append(
+          el(
+            "p",
+            {},
+            "A field was removed or no longer supports this index. Delete this definition and configure a replacement.",
+          ),
+        );
+      list.append(panel);
+    }
+    if (!result.rows.length)
+      list.append(el("p", { class: "muted" }, "No claim sort indexes configured."));
+  }
+  addField();
+  d.content.append(
+    el(
+      "p",
+      {},
+      "Prepare up to four frequently used claim orders per pool. Fresh tasks remain first; retries retain oldest-grant priority. Indexes update automatically when tasks change. Other requested orders still work without an index.",
+    ),
+    list,
+    el("h3", {}, "Configure an index"),
+    labeled("Index name", name),
+    editor,
+    button("Add sort field", addField),
+    button(
+      "Save index definition",
+      async () => {
+        if (!rows.length) throw new Error("Choose at least one sort field.");
+        await api(`/pools/${pool.id}/claim-sort-indexes`, {
+          ...operation(),
+          name: name.value,
+          sorts: rows.map((r) => ({ field: r.field.value, direction: r.direction.value })),
+        });
+        name.value = "";
+        await refresh();
+      },
+      "primary",
+    ),
+  );
+  await refresh();
 }

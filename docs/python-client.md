@@ -21,6 +21,20 @@ Task methods are `complete(result, runtime=None)`, `release(note=None, details=N
 
 Runtime is measured with a monotonic clock from receipt/recovery, not wall-clock timestamps. An explicit completion runtime overrides that measurement. Recovery marks the runtime origin as recovered.
 
+## Ordered claims
+
+```python
+tasks = client.claim(5, filter='n >= 32', sort=[("category", "asc"), ("n", "desc")])
+```
+
+`sort` accepts up to eight distinct scalar field keys or labels, in priority order. Directions are `asc` and `desc`. The client serializes this as `sorts: [{"field": "category", "direction": "asc"}, ...]`. The server resolves labels to keys, rejects unknown/duplicate fields and nested JSON, and enforces the profile's worker filter/sort allowlist. Null/missing values come first in either direction; text is case-sensitive and decimal-string integers compare exactly.
+
+Never-attempted tasks in the requesting profile are granted first, ordered by the requested fields, then Task ID and internal UUID. Retries follow oldest last grant first, then requested fields, Task ID and UUID. Sorting therefore affects retry order only when last-grant times tie. Filters, capacities, attempt limits and lease fencing continue to apply. Omitting `sort` preserves the existing scheduling order.
+
+Administrators can build indexes for recurring orders under **Pools & profiles → Claim sort indexes**. Send the same ordinary sort list whether an index exists or not. Without a matching index SQLite can scan all eligible candidates while retaining only the best requested few; an index can avoid that sort and much of the scan. Retry age spans another table, so a single index cannot cover every retry ordering.
+
+Sorting is part of the claim request identity. An uncertain retry preserves the same tasks and order. Resolve an uncertain claim before changing its sort; reusing the same request ID with changed sorting produces an idempotency conflict.
+
 ## Uncertain responses
 
 Every mutation has a UUID, creation timestamp and item IDs. Prepared bytes include the measured runtime. A retry after a timeout or lost response resends those same bytes, within a 15-second call timeout and 60-second retry budget. Changed content gets a new identity. Authentication, validation and quota errors are not retried in an unbounded loop. Busy responses and Retry-After are bounded.

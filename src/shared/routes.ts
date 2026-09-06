@@ -1,3 +1,4 @@
+import { sortSchema } from "./sort";
 import { z } from "zod";
 import { fieldSchema, idSchema, policySchema } from "./core";
 import {
@@ -104,6 +105,7 @@ const exportRequest = mutation
     profile_id: uuid.optional(),
     selection: selectionSchema,
     history: z.boolean().default(false),
+    sorts: sortSchema.optional(),
   })
   .strict();
 const importPreview = mutation
@@ -158,8 +160,9 @@ const view = mutation
     presentation: z
       .object({
         filter: z.string().default(""),
-        sort: z.string().default("task_id"),
-        direction: z.enum(["asc", "desc"]).default("asc"),
+        sort: z.string().optional(),
+        sorts: sortSchema.optional(),
+        direction: z.enum(["asc", "desc"]).optional(),
         columns: z
           .array(
             z
@@ -171,7 +174,9 @@ const view = mutation
               .strict(),
           )
           .default([]),
-        page_size: z.union([z.literal(50), z.literal(100), z.literal(250)]).default(100),
+        page_size: z
+          .union([z.literal(50), z.literal(100), z.literal(250), z.literal("all")])
+          .default(100),
         profile_id: z.string().nullable().optional(),
       })
       .strict(),
@@ -205,18 +210,16 @@ export const itemResultSchema = z.discriminatedUnion("status", [
     error: z.object({ code: z.string(), message: z.string() }),
   }),
 ]);
-export const taskGrantSchema = leaseIdentity
-  .omit({ item_id: true })
-  .extend({
-    issued_at: z.iso.datetime(),
-    expires_at: z.iso.datetime(),
-    maximum_expires_at: z.iso.datetime(),
-    input_revision: revision,
-    attempts: z.number().int(),
-    attempts_total: z.number().int(),
-    tags: z.array(z.string()),
-    data: record,
-  });
+export const taskGrantSchema = leaseIdentity.omit({ item_id: true }).extend({
+  issued_at: z.iso.datetime(),
+  expires_at: z.iso.datetime(),
+  maximum_expires_at: z.iso.datetime(),
+  input_revision: revision,
+  attempts: z.number().int(),
+  attempts_total: z.number().int(),
+  tags: z.array(z.string()),
+  data: record,
+});
 const claimResponse = z.object({
   canonical_profile_id: uuid,
   requested_count: z.number(),
@@ -282,6 +285,25 @@ export const routes: RouteContract[] = [
     endpoint("patch", `/${p}/{id}`, configPatchSchema, `Conditionally update ${p}`),
   ]),
   get("/pools/{id}/fields", "Current input and result schema"),
+  get("/pools/{id}/claim-sort-indexes", "List configured claim sort indexes"),
+  endpoint(
+    "post",
+    "/pools/{id}/claim-sort-indexes",
+    mutation.extend({ name: z.string().trim().min(1).max(128), sorts: sortSchema.min(1) }).strict(),
+    "Configure a reusable claim sort index",
+  ),
+  endpoint(
+    "post",
+    "/claim-sort-indexes/{id}/build",
+    mutation.extend({ expected_revision: revision }).strict(),
+    "Build or rebuild a configured index",
+  ),
+  endpoint(
+    "delete",
+    "/claim-sort-indexes/{id}",
+    mutation.extend({ expected_revision: revision }).strict(),
+    "Delete a configured index",
+  ),
   get("/pools/{id}/tasks", "Filter, sort and paginate tasks"),
   get("/tasks/{uid}", "Task detail"),
   get("/tasks/{uid}/attempts", "Immutable attempt history"),
@@ -394,7 +416,7 @@ export const routes: RouteContract[] = [
           .object({
             format: z.literal("task-broker-portable"),
             format_version: z.literal(1),
-            schema_version: z.number().int().min(1).max(3),
+            schema_version: z.number().int().min(1).max(4),
           })
           .passthrough(),
         total_records: z.number().int().nonnegative(),
@@ -593,6 +615,11 @@ const pageQuery = z
     limit: z.coerce.number().int().min(1).max(250).optional(),
     filter: z.string().max(4096).optional(),
     sort: z.string().optional(),
+    sorts: z
+      .string()
+      .max(8192)
+      .describe("URL-encoded JSON SortSpec array. Cannot be combined with legacy sort/direction.")
+      .optional(),
     direction: z.enum(["asc", "desc"]).optional(),
     profile_id: uuid.optional(),
     pool_id: uuid.optional(),

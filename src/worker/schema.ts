@@ -1,3 +1,4 @@
+import { invalidateSortIndexes } from "./sort-indexes";
 import { z } from "zod";
 import {
   AppError,
@@ -206,6 +207,7 @@ export async function schemaApply(c: Context, poolId: string) {
       ),
     );
     if (action.incompatible) {
+      await invalidateSortIndexes(r, poolId, action.fields);
       r.statements.push(
         stmt(
           db,

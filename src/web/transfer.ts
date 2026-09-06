@@ -1,3 +1,4 @@
+import { defaultSorts, type SortSpec } from "../shared/sort";
 import Papa from "papaparse";
 import { api, operation } from "./api";
 import { button, dialog, download, el, errorBox, labeled, select, stringify, toast } from "./dom";
@@ -276,6 +277,7 @@ export function exportDialog(
   fields: Field[],
   filter: string,
   selected: TaskRow[],
+  sorts: SortSpec = defaultSorts(),
 ) {
   const d = dialog("Export tasks", true),
     selection = select([
@@ -297,7 +299,7 @@ export function exportDialog(
     el(
       "p",
       { class: "input-note" },
-      "Task IDs are frozen at the start. Values are read live in pages and may change while downloading. Safe CSV prefixes formula-like text; JSON preserves exact strings.",
+      "Task IDs and the current sort order are frozen at the start. Values are read live in pages and may change while downloading. Safe CSV prefixes formula-like text; JSON preserves exact strings.",
     ),
     progress,
     button(
@@ -312,6 +314,7 @@ export function exportDialog(
           ...operation(),
           pool_id: poolId,
           history: history.checked,
+          sorts,
           ...(profileId ? { profile_id: profileId } : {}),
           selection: {
             filter: selection.value === "view" ? filter : "",

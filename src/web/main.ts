@@ -1,3 +1,11 @@
+import {
+  defaultSorts,
+  promoteSort,
+  sortChoice,
+  sortKeys,
+  taskComparator,
+  type SortSpec,
+} from "../shared/sort";
 import "./styles.css";
 import { api, apiRows, ApiError, operation } from "./api";
 import {
@@ -35,9 +43,8 @@ const state = {
   fields: [] as Field[],
   rows: [] as TaskRow[],
   filter: "",
-  sort: "task_id",
-  direction: "asc",
-  pageSize: 100,
+  sorts: defaultSorts(),
+  pageSize: 100 as number | "all",
   cursor: null as string | null,
   back: [] as (string | null)[],
   next: null as string | null,
@@ -156,6 +163,7 @@ function renderPoolNav() {
           async () => {
             if (!(await canLeave())) return;
             state.poolId = p.id;
+            state.sorts = defaultSorts();
             state.profileId = "";
             state.cursor = null;
             state.back = [];
@@ -205,6 +213,9 @@ async function canLeave() {
 }
 async function navigate(screen: string, force = false) {
   if (!force && !(await canLeave())) return;
+  cancelLoad();
+  deferredReload = false;
+  deferredSorts = null;
   state.screen = screen;
   state.grid?.destroy();
   state.grid = null;
@@ -365,19 +376,27 @@ async function showTasks() {
           state.fields,
           state.filter,
           state.grid?.selected() ?? [],
+          state.sorts,
         ),
       ),
     ),
   );
   const grid = el("div", { id: "task-grid", class: "grid-wrap" });
-  main.append(grid);
+  main.append(
+    el("div", { id: "task-sorts", class: "toolbar", "aria-label": "Sort priority" }),
+    grid,
+  );
   const pageSize = select(
-    [50, 100, 250].map((n) => ({ value: String(n), label: `${n} rows` })),
+    [
+      ...[50, 100, 250].map((n) => ({ value: String(n), label: `${n} rows` })),
+      { value: "all", label: "All rows" },
+    ],
     String(state.pageSize),
   );
   pageSize.setAttribute("aria-label", "Page size");
   pageSize.onchange = () => {
-    state.pageSize = Number(pageSize.value);
+    state.pageSize = pageSize.value === "all" ? "all" : Number(pageSize.value);
+    updateLoadControls();
     state.cursor = null;
     state.back = [];
     void loadPage();
@@ -390,6 +409,7 @@ async function showTasks() {
       state.lastActivity = Date.now();
     },
   });
+  live.id = "task-live-refresh";
   main.append(
     el(
       "div",
@@ -411,6 +431,9 @@ async function showTasks() {
           }
         }),
         pageSize,
+        button("Cancel loading", cancelLoad),
+        button("Retry loading", () => loadPage(true)),
+        el("span", { id: "all-load-progress", role: "status" }),
       ),
       el(
         "div",
@@ -432,71 +455,107 @@ async function showTasks() {
   );
   await loadPage();
 }
-let loading = false;
+let loadController: AbortController | null = null;
+let loadGeneration = 0;
+let allIdentity = "",
+  allCursor: string | null = null,
+  allComplete = false,
+  allCount = 0;
+let deferredReload = false;
+let deferredSorts: SortSpec | null = null;
 const viewIdentity = () =>
   JSON.stringify([
     state.screen,
     state.poolId,
     state.profileId,
     state.filter,
-    state.sort,
-    state.direction,
-    state.cursor,
+    state.sorts,
     state.pageSize,
+    state.cursor,
   ]);
-async function loadPage() {
-  if (loading) return;
-  const identity = viewIdentity();
-  let stale = false;
-  loading = true;
-  try {
-    const query = new URLSearchParams({
-      filter: state.filter,
-      sort: state.sort,
-      direction: state.direction,
-      limit: String(state.pageSize),
-    });
-    if (state.profileId) query.set("profile_id", state.profileId);
-    if (state.cursor) query.set("cursor", state.cursor);
-    const result = await api(`/pools/${state.poolId}/tasks?${query}`);
-    if (identity !== viewIdentity()) {
-      stale = true;
-      return;
-    }
-    const protectedIds = new Set([...state.drafts.values()].map((d) => d.row.task_uid));
-    if (state.grid?.editingId) protectedIds.add(state.grid.editingId);
-    const sameFields = JSON.stringify(state.fields) === JSON.stringify(result.fields);
-    const sameRows =
-      state.rows.map((r) => r.task_uid).join(",") ===
-      result.rows.map((r: TaskRow) => r.task_uid).join(",");
-    if (state.grid && sameFields && (sameRows || protectedIds.size)) {
-      const returned = new Map<string, TaskRow>(result.rows.map((r: TaskRow) => [r.task_uid, r]));
-      state.rows = state.rows.map((r) =>
-        protectedIds.has(r.task_uid) ? r : (returned.get(r.task_uid) ?? r),
-      );
-      await state.grid.updateRows(
-        state.rows.filter((r) => !protectedIds.has(r.task_uid)),
-        state.fields,
-      );
-      if (!protectedIds.size) state.next = result.cursor;
-      state.lastUpdated = new Date().toLocaleTimeString();
-      status.textContent = `${result.total.toLocaleString()} tasks · updated ${state.lastUpdated}`;
-      if (state.drafts.size) updateStatus();
-      return;
-    }
-    if (protectedIds.size) {
-      updateStatus();
-      return;
-    }
-    state.fields = result.fields;
-    state.rows = result.rows;
-    state.next = result.cursor;
-    state.lastUpdated = new Date().toLocaleTimeString();
-    const selected = state.grid?.selected().map((r) => r.task_uid) ?? [];
-    const columns = state.grid?.columns();
-    state.grid?.destroy();
-    const host = document.getElementById("task-grid");
-    if (!host) return;
+const editing = () => !!(state.drafts.size || state.saving || state.grid?.editing);
+function cancelLoad() {
+  loadController?.abort();
+  loadController = null;
+  loadGeneration++;
+  updateLoadControls();
+}
+function updateLoadControls() {
+  const all = state.pageSize === "all";
+  const live = document.getElementById("task-live-refresh") as HTMLInputElement | null;
+  if (live) {
+    live.disabled = all;
+    live.checked = !all && state.live;
+    live.title = all ? "All rows refresh manually." : "";
+  }
+  const progress = document.getElementById("all-load-progress");
+  if (progress)
+    progress.textContent = !all
+      ? ""
+      : allComplete
+        ? `All ${state.rows.length.toLocaleString()} rows loaded · manual refresh`
+        : `${state.rows.length.toLocaleString()} of ${allCount.toLocaleString()} loaded · ${loadController ? "loading" : "incomplete"}`;
+  for (const b of main?.querySelectorAll<HTMLButtonElement>(".pagination button") ?? []) {
+    if (b.textContent === "Cancel loading") b.hidden = !all || !loadController;
+    if (b.textContent === "Retry loading") b.hidden = !all || allComplete || !!loadController;
+    if (b.textContent === "← Previous" || b.textContent === "Next →") b.hidden = all;
+  }
+}
+function renderSorts() {
+  const host = document.getElementById("task-sorts");
+  if (!host) return;
+  host.replaceChildren(el("span", { class: "muted" }, "Sort priority:"));
+  for (const [i, s] of state.sorts.entries()) {
+    const label = state.fields.find((f) => f.key === s.field)?.label ?? s.field;
+    host.append(
+      button(`${i + 1}. ${label} ${s.direction === "asc" ? "↑" : "↓"} ×`, () =>
+        changeSorts(state.sorts.filter((x) => x.field !== s.field)),
+      ),
+    );
+  }
+  host.append(button("Reset sorting", () => changeSorts(defaultSorts())));
+  state.grid?.setSorts(state.sorts);
+}
+async function changeSorts(sorts: SortSpec) {
+  if (editing()) {
+    deferredSorts = sorts;
+    toast("Sorting will apply after edits are saved or discarded.");
+    return;
+  }
+  const local = state.pageSize === "all" && allComplete && allIdentity === viewIdentity();
+  cancelLoad();
+  state.sorts = sorts;
+  state.cursor = null;
+  state.back = [];
+  if (local) {
+    const generation = loadGeneration;
+    allIdentity = viewIdentity();
+    state.rows.sort(taskComparator(sorts, state.fields));
+    await state.grid?.replaceRows(state.rows, state.fields);
+    if (generation !== loadGeneration) return;
+    renderSorts();
+    updateLoadControls();
+  } else await loadPage();
+}
+function flushDeferred() {
+  if (editing()) return;
+  if (deferredSorts) {
+    const sorts = deferredSorts;
+    deferredSorts = null;
+    deferredReload = false;
+    void changeSorts(sorts);
+  } else if (deferredReload) {
+    deferredReload = false;
+    void loadPage();
+  }
+}
+async function renderTaskRows(append: TaskRow[] | null = null) {
+  const host = document.getElementById("task-grid");
+  if (!host) return;
+  if (state.grid) {
+    if (append) await state.grid.appendRows(append, state.fields);
+    else await state.grid.replaceRows(state.rows, state.fields);
+  } else {
     state.grid = new TaskGrid(
       host,
       state.fields,
@@ -507,33 +566,129 @@ async function loadPage() {
         selectedLabel.textContent = `${count} selected (loaded rows)`;
       },
       (key) => {
-        if (key.startsWith("result:") || key === "tags_text") return;
-        state.direction = state.sort === key && state.direction === "asc" ? "desc" : "asc";
-        state.sort = key;
-        state.cursor = null;
-        void loadPage();
+        if (["tags_text", "expires_at"].includes(key)) return;
+        const field = state.fields.find((f) => f.key === key);
+        if (field?.type === "json") {
+          toast("JSON columns cannot be sorted. Map a scalar field instead.");
+          return;
+        }
+        try {
+          void changeSorts(promoteSort(deferredSorts ?? state.sorts, key)).catch(notifyError);
+        } catch (e) {
+          notifyError(e);
+        }
       },
       pasteRectangle,
+      state.sorts,
+      flushDeferred,
     );
-    const gridInstance = state.grid;
-    await gridInstance.ready;
-    if (identity !== viewIdentity()) {
-      stale = true;
-      return;
+    await state.grid.ready;
+  }
+  renderSorts();
+}
+async function loadPage(resume = false) {
+  cancelLoad();
+  if (editing()) {
+    deferredReload = true;
+    toast("Refresh will resume after edits are saved or discarded.");
+    return;
+  }
+  if (deferredSorts) {
+    state.sorts = deferredSorts;
+    deferredSorts = null;
+    state.cursor = null;
+    state.back = [];
+  }
+  deferredReload = false;
+  const generation = loadGeneration,
+    identity = viewIdentity(),
+    all = state.pageSize === "all";
+  const controller = new AbortController();
+  loadController = controller;
+  let cursor = all && resume && allIdentity === identity ? allCursor : all ? null : state.cursor;
+  const continuing = all && resume && allIdentity === identity && state.rows.length > 0 && !!cursor;
+  if (all) {
+    if (!continuing) {
+      allCursor = null;
+      allComplete = false;
+      allCount = 0;
     }
-    if (columns) gridInstance.applyColumns(columns);
-    gridInstance.table.selectRow(
-      selected.filter((id) => state.rows.some((r) => r.task_uid === id)),
-    );
-    status.textContent = `${result.total.toLocaleString()} tasks · updated ${state.lastUpdated}`;
-    status.className = "badge";
+    allIdentity = identity;
+  }
+  let first = !continuing;
+  let selected = state.grid?.selected().map((r) => r.task_uid) ?? [];
+  let columns = state.grid?.columns();
+  try {
+    if (all && !continuing) {
+      state.rows = [];
+      if (state.grid) await state.grid.replaceRows([], state.fields);
+      if (controller.signal.aborted || generation !== loadGeneration) return;
+    }
+    updateLoadControls();
+    do {
+      const query = new URLSearchParams({
+        filter: state.filter,
+        sorts: JSON.stringify(state.sorts),
+        limit: String(all ? 250 : state.pageSize),
+      });
+      if (state.profileId) query.set("profile_id", state.profileId);
+      if (cursor) query.set("cursor", cursor);
+      const result = await api(
+        `/pools/${state.poolId}/tasks?${query}`,
+        undefined,
+        "GET",
+        controller.signal,
+      );
+      if (controller.signal.aborted || generation !== loadGeneration || identity !== viewIdentity())
+        return;
+      if (editing()) {
+        deferredReload = true;
+        return;
+      }
+      const sameFields = JSON.stringify(state.fields) === JSON.stringify(result.fields);
+      if (!sameFields && state.grid) {
+        columns = state.grid.columns();
+        state.grid.destroy();
+        state.grid = null;
+      }
+      const restoreColumns = !state.grid;
+      state.fields = result.fields;
+      if (first || !all) state.rows = result.rows;
+      else {
+        const seen = new Set(state.rows.map((r) => r.task_uid));
+        result.rows = result.rows.filter((r: TaskRow) => !seen.has(r.task_uid));
+        state.rows.push(...result.rows);
+      }
+      await renderTaskRows(!first && all ? result.rows : null);
+      if (controller.signal.aborted || generation !== loadGeneration) return;
+      if (restoreColumns && columns) state.grid?.applyColumns(columns);
+      const loadedIds = new Set(state.rows.map((r) => r.task_uid));
+      state.grid?.table.selectRow(selected.filter((id) => loadedIds.has(id)));
+      // Restore each prior selection once; later pages must respect new deselections.
+      selected = selected.filter((id) => !loadedIds.has(id));
+      state.next = result.cursor;
+      state.lastUpdated = new Date().toLocaleTimeString();
+      status.textContent = `${result.total.toLocaleString()} tasks · updated ${state.lastUpdated}`;
+      status.className = "badge";
+      cursor = result.cursor;
+      if (all) {
+        allCount = result.total;
+        allCursor = cursor;
+        allComplete = cursor === null;
+      }
+      first = false;
+      updateLoadControls();
+    } while (all && cursor && !controller.signal.aborted);
   } catch (e) {
-    status.textContent = "Refresh failed";
+    if (controller.signal.aborted || generation !== loadGeneration) return;
+    status.textContent = all ? "Load incomplete — retry loading" : "Refresh failed";
     status.className = "badge error";
     notifyError(e);
   } finally {
-    loading = false;
-    if (stale && state.screen === "tasks") void loadPage();
+    if (generation === loadGeneration) {
+      loadController = null;
+      updateLoadControls();
+    }
   }
 }
 function updateStatus() {
@@ -680,6 +835,7 @@ async function saveStagedDrafts() {
             d.content.append(button("Download conflicts", () => downloadOperationErrors(id)));
         await loadPage();
         updateStatus();
+        flushDeferred();
       },
       "primary",
     ),
@@ -787,6 +943,7 @@ async function persistDraft(id: string, draft: Draft) {
   } finally {
     state.saving--;
     updateStatus();
+    flushDeferred();
   }
 }
 async function taskForm(row?: TaskRow) {
@@ -1291,8 +1448,7 @@ function viewDialog() {
           shared: shared.checked,
           presentation: {
             filter: state.filter,
-            sort: state.sort,
-            direction: state.direction,
+            sorts: state.sorts,
             page_size: state.pageSize,
             profile_id: state.profileId || null,
             columns: state.grid?.columns() ?? [],
@@ -1323,8 +1479,7 @@ function viewDialog() {
         const p = view.presentation;
         Object.assign(state, {
           filter: p.filter,
-          sort: p.sort,
-          direction: p.direction,
+          sorts: sortKeys(sortChoice(p), state.fields),
           pageSize: p.page_size,
           profileId: p.profile_id ?? "",
           cursor: null,
@@ -1630,6 +1785,8 @@ window.addEventListener("beforeunload", (event) => {
 setInterval(() => {
   if (
     state.live &&
+    !loadController &&
+    state.pageSize !== "all" &&
     state.screen === "tasks" &&
     !document.hidden &&
     Date.now() - state.lastActivity < 900000 &&

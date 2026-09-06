@@ -5,6 +5,7 @@ import {
 } from "tabulator-tables";
 import { parseJSON, type Field } from "../shared/core";
 import type { TaskRow } from "../shared/contracts";
+import type { SortSpec } from "../shared/sort";
 import { dialog, el, button } from "./dom";
 export function inputValue(
   text: unknown,
@@ -56,6 +57,8 @@ export class TaskGrid {
     onSelect: (count: number) => void,
     onSort: (key: string) => void,
     onPaste: (text: string, rows: TaskRow[], columns: string[]) => Promise<void>,
+    private sorts: SortSpec = [],
+    private onEditingDone: () => void = () => {},
   ) {
     const col = (
       title: string,
@@ -63,12 +66,12 @@ export class TaskGrid {
       extra: Partial<ColumnDefinition> = {},
     ): ColumnDefinition => ({
       title,
-      titleFormatter: () => el("span", {}, title),
+      titleFormatter: () => el("span", {}, this.sortTitle(title, field)),
       field,
       formatter: "plaintext",
       minWidth: 100,
       headerSort: false,
-      headerClick: () => onSort(field.replace(/^input:/, "")),
+      headerClick: () => onSort(field.replace(/^(input|result):/, "")),
       ...extra,
     });
     const columns: ColumnDefinition[] = [
@@ -184,6 +187,7 @@ export class TaskGrid {
     this.table.on("cellEditCancelled", () => {
       this.editing = false;
       this.editingId = null;
+      this.onEditingDone();
     });
     this.table.on("cellEdited", (cell: CellComponent) => {
       this.editing = false;
@@ -203,6 +207,7 @@ export class TaskGrid {
         cell.getElement().classList.add("cell-error");
         this.onEdit(row.__row, cell.getField(), cell.getValue());
       }
+      this.onEditingDone();
     });
     this.table.on("rowSelectionChanged", (data) => onSelect(data.length));
   }
@@ -234,6 +239,39 @@ export class TaskGrid {
     } finally {
       this.suppress = false;
     }
+  }
+  async appendRows(rows: TaskRow[], fields: Field[]) {
+    await this.table.addData(rows.map((r) => this.flatten(r, fields)));
+  }
+  async replaceRows(rows: TaskRow[], fields: Field[]) {
+    const selected = this.selected().map((r) => r.task_uid);
+    await this.table.replaceData(rows.map((r) => this.flatten(r, fields)));
+    this.table.selectRow(selected.filter((id) => rows.some((r) => r.task_uid === id)));
+  }
+  setSorts(sorts: SortSpec) {
+    this.sorts = sorts;
+    for (const col of this.table.getColumns()) {
+      const field = col.getField();
+      if (!field) continue;
+      const priority = sorts.findIndex((s) => s.field === field.replace(/^(input|result):/, ""));
+      const title = col.getDefinition().title ?? "";
+      const host = col.getElement();
+      host
+        .querySelector(".tabulator-col-title")
+        ?.replaceChildren(el("span", {}, this.sortTitle(title, field)));
+      if (priority === 0)
+        host.setAttribute("aria-sort", sorts[0].direction === "asc" ? "ascending" : "descending");
+      else host.removeAttribute("aria-sort");
+    }
+  }
+  private sortTitle(title: string, field: string) {
+    const priority = this.sorts.findIndex((s) => s.field === field.replace(/^(input|result):/, ""));
+    return (
+      title +
+      (priority < 0
+        ? ""
+        : ` ${this.sorts[priority].direction === "asc" ? "↑" : "↓"} ${priority + 1}`)
+    );
   }
   selected(): TaskRow[] {
     return this.table.getSelectedData().map((x: any) => x.__row);

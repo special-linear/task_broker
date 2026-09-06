@@ -1,3 +1,6 @@
+import { sortResolver } from "./sorting";
+import { listSortIndexes, createSortIndex, changeSortIndex } from "./sort-indexes";
+import { sortSchema, sortChoice, resolveSorts, sortSpec } from "../shared/sort";
 import { recordDto } from "./presentation";
 import { z } from "zod";
 import { isCollection, listCollection } from "./lists";
@@ -51,6 +54,13 @@ export async function adminRoute(c: Context): Promise<unknown> {
   const path = c.url.pathname.replace(/^\/admin-api\/v1/, "").replace(/\/$/, ""),
     method = c.request.method,
     db = c.env.DB;
+  const indexCollection = path.match(/^\/pools\/([^/]+)\/claim-sort-indexes$/);
+  if (indexCollection && method === "GET") return listSortIndexes(c, indexCollection[1]);
+  if (indexCollection && method === "POST") return createSortIndex(c, indexCollection[1]);
+  const indexBuild = path.match(/^\/claim-sort-indexes\/([^/]+)\/build$/);
+  if (indexBuild && method === "POST") return changeSortIndex(c, indexBuild[1]);
+  const indexDelete = path.match(/^\/claim-sort-indexes\/([^/]+)$/);
+  if (indexDelete && method === "DELETE") return changeSortIndex(c, indexDelete[1], true);
   if (method === "GET") {
     if (path === "/portable-export") return portableManifest(c);
     if (path === "/portable-export/pages") return portablePage(c);
@@ -235,8 +245,9 @@ async function saveView(c: Context, id?: string) {
         presentation: z
           .object({
             filter: z.string().default(""),
-            sort: z.string().default("task_id"),
-            direction: z.enum(["asc", "desc"]).default("asc"),
+            sort: z.string().optional(),
+            sorts: sortSchema.optional(),
+            direction: z.enum(["asc", "desc"]).optional(),
             columns: z
               .array(
                 z
@@ -248,7 +259,9 @@ async function saveView(c: Context, id?: string) {
                   .strict(),
               )
               .default([]),
-            page_size: z.union([z.literal(50), z.literal(100), z.literal(250)]).default(100),
+            page_size: z
+              .union([z.literal(50), z.literal(100), z.literal(250), z.literal("all")])
+              .default(100),
             profile_id: z.string().nullable().optional(),
           })
           .strict(),
@@ -261,6 +274,12 @@ async function saveView(c: Context, id?: string) {
     r = await beginReceipt(c.env, c.actor, id ? "view.update" : "view.create", scope, body),
     uid = id ?? crypto.randomUUID();
   if (!r.existing) {
+    const resolved = resolveSorts(
+      sortChoice(body.presentation),
+      sortResolver(await fieldsFor(c.env, body.pool_id), body.profile_id ?? null),
+    );
+    const { sort: _sort, direction: _direction, ...storedPresentation } = body.presentation;
+    const presentation = { ...storedPresentation, sorts: sortSpec(resolved) };
     if (id) {
       assert(body.expected_revision, "INVALID_VALUE", "Expected revision is required.");
       r.statements.push(
@@ -278,7 +297,7 @@ async function saveView(c: Context, id?: string) {
           c.env.DB,
           "UPDATE saved_views SET name=?,presentation_json=?,profile_id=?,shared=?,revision=revision+1 WHERE id=?",
           body.name,
-          json(body.presentation),
+          json(presentation),
           body.profile_id ?? null,
           body.shared,
           id,
@@ -295,7 +314,7 @@ async function saveView(c: Context, id?: string) {
           c.actor.id,
           body.shared,
           body.name,
-          json(body.presentation),
+          json(presentation),
         ),
       );
     audit(r, "view", uid, { name: body.name });

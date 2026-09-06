@@ -1,6 +1,6 @@
 # Verification and release status
 
-The verified staging deployment uses schema version 3. See [deployment evidence](evidence/deployment.json).
+The retained staging evidence covers schema version 3. It does not verify the new sorting changes, which require migration 0004. See [deployment evidence](evidence/deployment.json).
 
 This is a **release candidate**, not a claim that every acceptance gate is signed off. The complete [62-ID map](acceptance.md) distinguishes automated coverage from procedures requiring an operator or browser accessibility review.
 
@@ -12,11 +12,38 @@ This is a **release candidate**, not a claim that every acceptance gate is signe
 - **Native backup and isolated restore:** `consistent-backup.json` records a maintenance-protected native D1 export; the original SHA-256 is retained privately. `isolated-restore.json` records integrity/foreign-key checks, new external epoch enforcement, restored key quarantine and fresh successful work in a separate local D1 instance. The live staging database was not restored or overwritten.
 - **Injected remote failure:** `remote-rollback.json` proves that a real D1 failure after attempt insertion rolls back the receipt, attempt and lifetime counter, and that the unchanged request succeeds after removing the task-scoped trigger.
 - **Query plans:** `sql-plans.json` records remote D1 plans for representative candidate, capacity, identity and pending-chunk queries. It is a sample of indexed access paths, not an EXPLAIN of every filter combination.
-- **Local suites:** `npm test` covers transaction faults, lease/report/renew/recovery semantics, revisions, historical data, schemas, filters and deployed-mode JWT validation. Python unittest covers identity, rank restrictions, stable uncertain requests and bounded failure handling. The final recorded local run has 30 Worker/D1 tests, six Python tests and eight Chromium/Firefox tests passing. `local-checks.json` records the commands and scope; `python-parallel.json` verifies four actual subprocesses completing distinct handles.
+- **Earlier local baseline:** `local-checks.json` records 30 Worker/D1 tests, six Python tests and eight Chromium/Firefox tests passing before the sorting changes; `python-parallel.json` verifies four actual subprocesses completing distinct handles. New sorting coverage is described below.
 
 Sanitized public evidence lives under `docs/evidence/`; its README describes the redactions. New raw results stay in ignored `artifacts/private/verification/`. Private SQL backups, session cookies, compute keys and CLI logs stay in ignored `artifacts/private/` and are excluded from the release.
 
-## Measured remote workload
+## Sorting verification and local measurements
+
+The implementation passed TypeScript/build and generated-OpenAPI checks, 41 Worker/D1 tests, seven Python client tests, 12 Chromium/Firefox tests and 12 publication/packaging tests. Source privacy checks and release packaging also passed. These are local checks; the staging gate below remains open.
+
+`tests/sorting.test.ts` exercises stable promotion, ties across cursor pages, null/missing values, UTF-8 text, exact integers beyond int64, number/Boolean/datetime comparison, legacy views, frozen export ordinals with live values, top-k reference results at k=1/5/20, retry ages, allowlists, filters, caps, replay and concurrent claims. Index checks cover builds, rebuilds, failure/retry, deletion, maintenance after edits, label preservation and schema invalidation. The portable test restores definitions as unbuilt without creating executable indexes.
+
+The actual fresh branch captured from a claim is inspected with `EXPLAIN`: unindexed selection includes `IfNotZero`, `Last`, `IdxLE`, `Delete` and `Sort`, demonstrating pruning by LIMIT. With the configured expression index, `EXPLAIN QUERY PLAN` selects `claim_sort_<generated ID>` without a temporary ORDER BY tree, and the `Sort` opcode disappears. The full retry order still spans profile state and task inputs.
+
+`tests/browser/sorting.spec.ts` imports 10,000 tasks and checks virtualization, multi-column header history, local sorting without task-list requests, selection preservation, cancellation/resume, failure/retry, stale-response rejection, editor and failed-draft protection, polling restoration, matching CSV/JSON/NDJSON order, and administrator index actions. A separate case reads a legacy saved-view label and promotes its normalized field locally.
+
+The [local sorting benchmark](evidence/sort-performance-local.json) compares equivalent two-integer-field pools at 1,000 and 10,000 tasks. Each mode makes five claims at each k=1/5/20, verifies every result against a full reference sort, reports the tasks, then runs ten concurrent claim/report pairs. No browser load test ran during this measurement. The table below shows k=5; reads and SQL time are averages per request, while latency columns are request percentiles.
+
+|  Tasks | Claim mode        | p50 ms | p95 ms | Mean D1 SQL ms | Mean rows read |
+| -----: | ----------------- | -----: | -----: | -------------: | -------------: |
+|  1,000 | Default           |  41.09 |  70.13 |            6.0 |            344 |
+|  1,000 | Custom, unindexed |  46.70 |  48.48 |            7.6 |          2,310 |
+|  1,000 | Custom, indexed   |  39.67 |  57.56 |            4.2 |            344 |
+| 10,000 | Default           |  38.34 |  41.29 |            3.4 |            344 |
+| 10,000 | Custom, unindexed |  76.13 |  98.41 |           40.2 |         20,310 |
+| 10,000 | Custom, indexed   |  39.23 |  43.21 |            4.0 |            344 |
+
+All k=5 cases reported 150 writes per request. At 10,000 tasks, concurrent claim/report p95 latencies were 875/219 ms unindexed and 495/185 ms indexed. Index builds took 63 ms wall / 21 ms SQL at 1,000 tasks and 129 ms wall / 52 ms SQL at 10,000 tasks. The local database also contained earlier fixtures: partial-index creation can scan tasks in other pools, so build reads and total database size are not measurements of an isolated single pool. The JSON retains p50/p95/p99, SQL durations, reads/writes, build costs and separate concurrent claim/report summaries. Five samples per k are useful for comparison, not reliable tail-latency estimates or remote service guarantees.
+
+To reproduce, build the app, apply all local migrations, run the local worker, then run `node scripts/sort-performance.mjs`. It uses disposable pools, revokes its keys and disables/archives its pools afterward. `SORT_BENCH_SIZES=1000` narrows the fixture size. With an explicit `TEST_ORIGIN` pointing at the configured staging administrator origin and a current Access session, the same script runs against staging. Records go to ignored `artifacts/verification/`; review them before publishing evidence.
+
+**Staging gate:** the configured Access session was expired during this implementation. No staging migration or deployment was performed. Before production rollout, apply/build on staging, run ordered-claim concurrency and performance checks there, and inspect representative fresh/retry query plans on remote D1. The local results above do not close that gate.
+
+## Measured remote workload (prior version)
 
 The 10,000-task import/export and compute test used 812 measured requests. Wall latency: p50 371.36 ms, p95 632.08 ms, p99 852.18 ms. Claims: p50 391.53 ms, p95 640.70 ms, p99 751.85 ms. Reports: p50 362.21 ms, p95 447.63 ms, p99 633.21 ms. The burst p99 was 645.39 ms. These are observations from one staging location and run, not service-level guarantees.
 

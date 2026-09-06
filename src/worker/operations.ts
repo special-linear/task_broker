@@ -1,3 +1,5 @@
+import { sortSchema, resolveSorts, sortOrder, sortSpec, defaultSorts } from "../shared/sort";
+import { sortResolver } from "./sorting";
 import { z } from "zod";
 import {
   AppError,
@@ -75,6 +77,7 @@ export async function operationPreview(c: Context, exporting = false) {
             profile_id: z.string().uuid().optional(),
             selection: selectionSchema,
             history: z.boolean().default(false),
+            sorts: sortSchema.optional(),
           })
           .strict(),
         c.body,
@@ -90,6 +93,13 @@ export async function operationPreview(c: Context, exporting = false) {
     ),
     id = crypto.randomUUID();
   if (!r.existing) {
+    const exportPool = exporting
+      ? await one(c.env.DB, "SELECT * FROM pools WHERE id=?", body.pool_id)
+      : null;
+    if (exporting) {
+      assert(exportPool, "NOT_FOUND", "Pool not found.", 404);
+      configGuard(r, [{ table: "pools", id: body.pool_id, revision: exportPool.config_revision }]);
+    }
     const fields = await fieldsFor(c.env, body.pool_id),
       profileId = body.profile_id ?? null;
     if (profileId)
@@ -112,6 +122,10 @@ export async function operationPreview(c: Context, exporting = false) {
     const joins = profileId
       ? `JOIN profiles p ON p.id=${sqlString(profileId)} JOIN families f ON f.id=p.family_id LEFT JOIN task_profile_state ps ON ps.task_uid=t.task_uid AND ps.profile_id=p.id`
       : "";
+    const exportSorts = exporting
+      ? resolveSorts((body as any).sorts ?? defaultSorts(), sortResolver(fields, profileId))
+      : [];
+    const exportOrder = exporting ? sortOrder(exportSorts) : "t.task_id COLLATE BINARY,t.task_uid";
     const ids = body.selection.ids
       ? `AND t.task_uid IN(SELECT value FROM json_each(?${filter.params.length + 1}))`
       : "";
@@ -124,14 +138,18 @@ export async function operationPreview(c: Context, exporting = false) {
         exporting ? "export" : "bulk",
         body.pool_id,
         profileId,
-        json(exporting ? { history: (body as any).history } : (body as any).action),
+        json(
+          exporting
+            ? { history: (body as any).history, sorts: sortSpec(exportSorts) }
+            : (body as any).action,
+        ),
         json(body.selection),
       ),
     );
     r.statements.push(
       stmt(
         c.env.DB,
-        `INSERT INTO admin_operation_items(operation_id,ordinal,task_uid,expected_edit_revision,expected_input_revision,expected_state_revision,expected_generation) SELECT ${sqlString(id)},row_number() OVER(ORDER BY t.task_id COLLATE BINARY,t.task_uid)-1,t.task_uid,t.edit_revision,t.input_revision,t.state_revision,t.lease_generation FROM tasks t JOIN pools po ON po.id=t.pool_id ${joins} WHERE t.pool_id=${sqlString(body.pool_id)} ${body.selection.include_deleted ? "" : "AND t.deleted_at IS NULL"} ${ids} AND (${filter.sql})`,
+        `INSERT INTO admin_operation_items(operation_id,ordinal,task_uid,expected_edit_revision,expected_input_revision,expected_state_revision,expected_generation) SELECT ${sqlString(id)},row_number() OVER(ORDER BY ${exportOrder})-1,t.task_uid,t.edit_revision,t.input_revision,t.state_revision,t.lease_generation FROM tasks t JOIN pools po ON po.id=t.pool_id ${joins} WHERE t.pool_id=${sqlString(body.pool_id)} ${body.selection.include_deleted ? "" : "AND t.deleted_at IS NULL"} ${ids} AND (${filter.sql})`,
         ...filter.params,
         ...(body.selection.ids ? [json(body.selection.ids)] : []),
       ),
@@ -759,8 +777,9 @@ export async function exportPage(c: Context, id: string) {
         kind: "attempt_history",
         created_at: iso(op.created_at),
         total_tasks: op.total,
+        sorts: action.sorts ?? defaultSorts(),
         traversal:
-          "Task IDs are frozen; attempts are read live in task and lifetime sequence order.",
+          "Task IDs and sort ordinals are frozen; attempts are read live in frozen task order, then lifetime sequence order.",
       },
     };
   }
@@ -789,10 +808,12 @@ export async function exportPage(c: Context, id: string) {
       profile_id: op.profile_id,
       created_at: iso(op.created_at),
       selection: JSON.parse(op.selection_json),
-      schema_version: 3,
+      schema_version: 4,
+      sorts: action.sorts ?? defaultSorts(),
       fields,
       total: op.total,
-      traversal: "Selected IDs are frozen. Values are read live and may change during export.",
+      traversal:
+        "Selected IDs and sort ordinals are frozen. Values are read live and may change during export.",
     },
   };
 }

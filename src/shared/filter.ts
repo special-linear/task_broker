@@ -228,7 +228,7 @@ export function fieldResolver(
     assert(
       !allowlist || allowlist.some((k) => k.toLowerCase() === resolved.key.toLowerCase()),
       "FORBIDDEN",
-      `Filtering by ${name} is not allowed for this profile.`,
+      `Filtering or sorting by ${name} is not allowed for this profile.`,
       403,
     );
     return resolved;

@@ -1,3 +1,12 @@
+import {
+  querySorts,
+  resolveSorts,
+  sortSpec,
+  sortOrder,
+  sortProjection,
+  sortAfter,
+} from "../shared/sort";
+import { sortResolver } from "./sorting";
 import { recordDto } from "./presentation";
 import {
   AppError,
@@ -12,7 +21,7 @@ import {
   type Field,
 } from "../shared/core";
 import { editSchema, taskCreateSchema, type TaskPatch } from "../shared/contracts";
-import { compileFilter, integerCompare, parseFilter, sqlString } from "../shared/filter";
+import { compileFilter, parseFilter, sqlString } from "../shared/filter";
 import {
   all,
   audit,
@@ -44,9 +53,7 @@ export async function listTasks(c: Context, poolId: string) {
     pool = await one(c.env.DB, "SELECT * FROM pools WHERE id=?", poolId);
   assert(pool, "NOT_FOUND", "Pool not found.", 404);
   const filter = c.url.searchParams.get("filter") ?? "",
-    profileId = c.url.searchParams.get("profile_id"),
-    sort = c.url.searchParams.get("sort") ?? "task_id",
-    direction = c.url.searchParams.get("direction") === "desc" ? "desc" : "asc";
+    profileId = c.url.searchParams.get("profile_id");
   if (profileId)
     assert(
       await one(c.env.DB, "SELECT id FROM profiles WHERE id=? AND pool_id=?", profileId, poolId),
@@ -55,20 +62,16 @@ export async function listTasks(c: Context, poolId: string) {
     );
   const resolve = resolverFor(fields, profileId),
     compiled = compileFilter(parseFilter(filter), resolve, 1),
-    sortField = resolve(sort);
-  assert(
-    sortField.type !== "json",
-    "INVALID_VALUE",
-    "Nested JSON cannot be sorted; map a scalar field instead.",
-  );
+    sorts = resolveSorts(querySorts(c.url.searchParams), sortResolver(fields, profileId));
   const limit = Math.min(250, Math.max(1, Number(c.url.searchParams.get("limit") ?? 100)));
   assert(Number.isInteger(limit), "BAD_REQUEST", "Invalid page size.", 400);
   const scope = {
       poolId,
       profileId,
       filter,
-      sort,
-      direction,
+      sorts: sortSpec(sorts),
+      schema_version: pool.schema_version,
+      cursor_version: 2,
       limit,
       include_deleted: c.url.searchParams.get("include_deleted") === "true",
     },
@@ -79,31 +82,11 @@ export async function listTasks(c: Context, poolId: string) {
     ? `JOIN profiles p ON p.id=${sqlString(profileId)} JOIN families f ON f.id=p.family_id LEFT JOIN task_profile_state ps ON ps.task_uid=t.task_uid AND ps.profile_id=p.id`
     : "";
   const status = resolve("status").expression;
-  const comparator = direction === "asc" ? ">" : "<",
-    sortExp = sortField.expression,
-    nonnull = `(${sortExp} IS NOT NULL)`;
-  const lastValue = last ? sqlString(String(last.value ?? "")) : "NULL";
-  const compare =
-    sortField.type === "integer"
-      ? `${integerCompare(sortExp, lastValue)} ${comparator} 0`
-      : `${sortExp} ${comparator} ${sortField.type === "number" || sortField.type === "boolean" ? Number(last?.value ?? 0) : lastValue} COLLATE BINARY`;
-  const equal =
-    sortField.type === "integer"
-      ? `${integerCompare(sortExp, lastValue)}=0`
-      : `${sortExp}=${sortField.type === "number" || sortField.type === "boolean" ? Number(last?.value ?? 0) : lastValue} COLLATE BINARY`;
-  const after = last
-    ? `AND (${nonnull}>${last.value === null ? 0 : 1} OR (${nonnull}=${last.value === null ? 0 : 1} AND (${last.value === null ? "0" : compare} OR (${last.value === null ? "1" : equal} AND t.task_uid>${sqlString(last.uid)}))))`
-    : "";
-  let order = `${sortExp} COLLATE BINARY ${direction}`;
-  if (sortField.type === "integer") {
-    const negative = `substr(CAST(${sortExp} AS TEXT),1,1)='-'`,
-      digits = `ltrim(CAST(${sortExp} AS TEXT),'-')`;
-    order = `(${negative}) ${direction === "asc" ? "DESC" : "ASC"},(CASE WHEN ${negative} THEN -length(${digits}) ELSE length(${digits}) END) ${direction},CASE WHEN ${negative} THEN ${digits} END ${direction === "asc" ? "DESC" : "ASC"},CASE WHEN NOT(${negative}) THEN ${digits} END ${direction}`;
-  }
+  const after = last ? `AND (${sortAfter(sorts, last)})` : "";
   const where = `t.pool_id=${sqlString(poolId)} ${c.url.searchParams.get("include_deleted") === "true" ? "" : "AND t.deleted_at IS NULL"} AND (${compiled.sql})`;
   const rows = await all(
     c.env.DB,
-    `SELECT t.*,${status} status,${totalStatus} status_total,${profileId ? "COALESCE(ps.attempts,0)" : "t.attempts_total"} profile_attempts,${sortExp} sort_value,(SELECT expires_at FROM (${effectiveHeads(DB_NOW, sqlString(c.env.INSTANCE_EPOCH))}) h WHERE h.task_uid=t.task_uid) expires_at FROM tasks t JOIN pools po ON po.id=t.pool_id ${joins} WHERE ${where} ${after} ORDER BY ${nonnull} ASC,${order},t.task_uid LIMIT ${limit + 1}`,
+    `SELECT t.*,${status} status,${totalStatus} status_total,${profileId ? "COALESCE(ps.attempts,0)" : "t.attempts_total"} profile_attempts,${sorts.length ? sortProjection(sorts) + "," : ""}(SELECT expires_at FROM (${effectiveHeads(DB_NOW, sqlString(c.env.INSTANCE_EPOCH))}) h WHERE h.task_uid=t.task_uid) expires_at FROM tasks t JOIN pools po ON po.id=t.pool_id ${joins} WHERE ${where} ${after} ORDER BY ${sortOrder(sorts)} LIMIT ${limit + 1}`,
     ...compiled.params,
   );
   const page = rows.slice(0, limit),
@@ -171,7 +154,7 @@ export async function listTasks(c: Context, poolId: string) {
     cursor:
       rows.length > limit
         ? await encodeCursor(c.env, scope, {
-            value: tail!.sort_value,
+            values: sorts.map((_, i) => tail![`sort_${i}`]),
             uid: tail!.task_uid,
           })
         : null,

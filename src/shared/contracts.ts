@@ -1,3 +1,4 @@
+import { sortSchema } from "./sort";
 import { z } from "zod";
 import { fieldSchema, idSchema, policySchema, slugSchema } from "./core";
 export const mutation = z.object({
@@ -13,6 +14,7 @@ export const claimSchema = workerEnvelope
     count: z.number().int().positive().default(1),
     lease_seconds: z.number().int().positive().optional(),
     filter: z.string().default(""),
+    sorts: sortSchema.optional(),
   })
   .strict();
 export const batchSchema = workerEnvelope

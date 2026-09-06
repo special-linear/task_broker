@@ -1,0 +1,514 @@
+{
+  "recorded_at": "2026-09-06T16:42:59.170Z",
+  "environment": "local D1",
+  "cases": [
+    {
+      "size": 1000,
+      "mode": "default",
+      "build": null,
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 42.41,
+          "p95_ms": 44.22,
+          "p99_ms": 44.22,
+          "rows_read": 570,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 225492992,
+          "sql_ms": 27
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 41.09,
+          "p95_ms": 70.13,
+          "p99_ms": 70.13,
+          "rows_read": 1720,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 225640448,
+          "sql_ms": 30
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 40.78,
+          "p95_ms": 47.43,
+          "p99_ms": 47.43,
+          "rows_read": 6745,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 226185216,
+          "sql_ms": 29
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 129.49,
+          "p95_ms": 393.11,
+          "p99_ms": 461.95,
+          "rows_read": 2272,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 226275328,
+          "sql_ms": 43
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 165.77,
+          "p95_ms": 461.95,
+          "p99_ms": 461.95,
+          "rows_read": 1552,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 226271232,
+          "sql_ms": 28
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 105,
+          "p95_ms": 143.02,
+          "p99_ms": 143.02,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 226275328,
+          "sql_ms": 15
+        }
+      }
+    },
+    {
+      "size": 1000,
+      "mode": "unindexed",
+      "build": null,
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 41.98,
+          "p95_ms": 44.81,
+          "p99_ms": 44.81,
+          "rows_read": 10550,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 227868672,
+          "sql_ms": 36
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 46.7,
+          "p95_ms": 48.48,
+          "p99_ms": 48.48,
+          "rows_read": 11550,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 228003840,
+          "sql_ms": 38
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 47.69,
+          "p95_ms": 64.62,
+          "p99_ms": 64.62,
+          "rows_read": 15950,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 228573184,
+          "sql_ms": 45
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 191.16,
+          "p95_ms": 329.72,
+          "p99_ms": 349.88,
+          "rows_read": 19764,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 228671488,
+          "sql_ms": 84
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 213.82,
+          "p95_ms": 322.83,
+          "p99_ms": 322.83,
+          "rows_read": 19044,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 228651008,
+          "sql_ms": 66
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 166.45,
+          "p95_ms": 349.88,
+          "p99_ms": 349.88,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 228671488,
+          "sql_ms": 18
+        }
+      }
+    },
+    {
+      "size": 1000,
+      "mode": "indexed",
+      "build": {
+        "requests": 1,
+        "p50_ms": 63.34,
+        "p95_ms": 63.34,
+        "p99_ms": 63.34,
+        "rows_read": 127102,
+        "rows_written": 1014,
+        "max_statements": 16,
+        "max_parameters": 10,
+        "storage_bytes": 230400000,
+        "sql_ms": 21
+      },
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 36.55,
+          "p95_ms": 41.75,
+          "p99_ms": 41.75,
+          "rows_read": 570,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 230432768,
+          "sql_ms": 17
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 39.67,
+          "p95_ms": 57.56,
+          "p99_ms": 57.56,
+          "rows_read": 1720,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 230567936,
+          "sql_ms": 21
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 43.64,
+          "p95_ms": 60.21,
+          "p99_ms": 60.21,
+          "rows_read": 6745,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 231133184,
+          "sql_ms": 34
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 180.86,
+          "p95_ms": 263.14,
+          "p99_ms": 283.71,
+          "rows_read": 2454,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 231223296,
+          "sql_ms": 46
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 189.11,
+          "p95_ms": 283.71,
+          "p99_ms": 283.71,
+          "rows_read": 1734,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 231211008,
+          "sql_ms": 30
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 164.29,
+          "p95_ms": 231.44,
+          "p99_ms": 231.44,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 231223296,
+          "sql_ms": 16
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "mode": "default",
+      "build": null,
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 29.84,
+          "p95_ms": 57.61,
+          "p99_ms": 57.61,
+          "rows_read": 570,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 246779904,
+          "sql_ms": 14
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 38.34,
+          "p95_ms": 41.29,
+          "p99_ms": 41.29,
+          "rows_read": 1720,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 246910976,
+          "sql_ms": 17
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 47.38,
+          "p95_ms": 221.07,
+          "p99_ms": 221.07,
+          "rows_read": 6745,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 247443456,
+          "sql_ms": 27
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 120.38,
+          "p95_ms": 348.48,
+          "p99_ms": 433.06,
+          "rows_read": 2258,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 247533568,
+          "sql_ms": 44
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 124.34,
+          "p95_ms": 433.06,
+          "p99_ms": 433.06,
+          "rows_read": 1538,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 247529472,
+          "sql_ms": 24
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 98.72,
+          "p95_ms": 150.03,
+          "p99_ms": 150.03,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 247533568,
+          "sql_ms": 20
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "mode": "unindexed",
+      "build": null,
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 77.84,
+          "p95_ms": 78.57,
+          "p99_ms": 78.57,
+          "rows_read": 100550,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 263061504,
+          "sql_ms": 205
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 76.13,
+          "p95_ms": 98.41,
+          "p99_ms": 98.41,
+          "rows_read": 101550,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 263200768,
+          "sql_ms": 201
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 79.55,
+          "p95_ms": 96.46,
+          "p99_ms": 96.46,
+          "rows_read": 105950,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 263708672,
+          "sql_ms": 211
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 211.88,
+          "p95_ms": 763.82,
+          "p99_ms": 875.18,
+          "rows_read": 199568,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 263778304,
+          "sql_ms": 447
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 361.48,
+          "p95_ms": 875.18,
+          "p99_ms": 875.18,
+          "rows_read": 198848,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 263774208,
+          "sql_ms": 428
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 171.27,
+          "p95_ms": 219,
+          "p99_ms": 219,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 263778304,
+          "sql_ms": 19
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "mode": "indexed",
+      "build": {
+        "requests": 1,
+        "p50_ms": 128.89,
+        "p95_ms": 128.89,
+        "p99_ms": 128.89,
+        "rows_read": 166569,
+        "rows_written": 10014,
+        "max_statements": 16,
+        "max_parameters": 10,
+        "storage_bytes": 280559616,
+        "sql_ms": 52
+      },
+      "claims": {
+        "1": {
+          "requests": 5,
+          "p50_ms": 28.2,
+          "p95_ms": 40.87,
+          "p99_ms": 40.87,
+          "rows_read": 570,
+          "rows_written": 190,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 280604672,
+          "sql_ms": 17
+        },
+        "5": {
+          "requests": 5,
+          "p50_ms": 39.23,
+          "p95_ms": 43.21,
+          "p99_ms": 43.21,
+          "rows_read": 1720,
+          "rows_written": 750,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 280743936,
+          "sql_ms": 20
+        },
+        "20": {
+          "requests": 5,
+          "p50_ms": 39.48,
+          "p95_ms": 48.26,
+          "p99_ms": 48.26,
+          "rows_read": 6745,
+          "rows_written": 2850,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 281300992,
+          "sql_ms": 30
+        }
+      },
+      "concurrency": {
+        "overall": {
+          "requests": 20,
+          "p50_ms": 127.48,
+          "p95_ms": 410.28,
+          "p99_ms": 495.07,
+          "rows_read": 2258,
+          "rows_written": 580,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 281399296,
+          "sql_ms": 48
+        },
+        "claims": {
+          "requests": 10,
+          "p50_ms": 130.74,
+          "p95_ms": 495.07,
+          "p99_ms": 495.07,
+          "rows_read": 1538,
+          "rows_written": 380,
+          "max_statements": 21,
+          "max_parameters": 19,
+          "storage_bytes": 281395200,
+          "sql_ms": 29
+        },
+        "reports": {
+          "requests": 10,
+          "p50_ms": 103.08,
+          "p95_ms": 185.14,
+          "p99_ms": 185.14,
+          "rows_read": 720,
+          "rows_written": 200,
+          "max_statements": 19,
+          "max_parameters": 10,
+          "storage_bytes": 281399296,
+          "sql_ms": 19
+        }
+      }
+    }
+  ]
+}

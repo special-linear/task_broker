@@ -16,7 +16,12 @@ export const operation = () => ({
 // Keep uncertain writes in memory. A reviewed retry of the same intent reuses
 // the original wire body, including IDs and timestamps; nothing is persisted.
 const pending = new Map<string, unknown>();
-export async function api<T = any>(path: string, body?: unknown, method = "POST"): Promise<T> {
+export async function api<T = any>(
+  path: string,
+  body?: unknown,
+  method = "POST",
+  signal?: AbortSignal,
+): Promise<T> {
   let pendingKey: string | undefined;
   if (body && typeof body === "object" && "request_id" in body) {
     const semantic = { ...body } as any;
@@ -33,10 +38,13 @@ export async function api<T = any>(path: string, body?: unknown, method = "POST"
       headers: { "Content-Type": "application/json", "X-Task-Broker": "1" },
       credentials: "same-origin",
       cache: "no-store",
-      signal: AbortSignal.timeout(15000),
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(15000)])
+        : AbortSignal.timeout(15000),
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
   } catch {
+    if (signal?.aborted) throw new DOMException("Cancelled", "AbortError");
     throw new ApiError("OFFLINE", "Connection lost. Your changes are still unsaved.", 0);
   }
   if (!response.headers.get("Content-Type")?.includes("application/json"))

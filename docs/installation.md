@@ -228,7 +228,15 @@ You can now create real work using the [browser manual](user-guide.md) and [Pyth
 
 ## Upgrades
 
-Back up the database and review the release and migration notes before updating the connected source. Keep the same Worker, D1 database, build variables, deployment command, runtime settings, and application secrets. A push to the configured production branch triggers a build; a manual **Retry build** is also available.
+Back up the database and review the release and migration notes before updating the connected source. Keep the same Worker, D1 database, build variables, deployment command, runtime settings, and application secrets.
+
+To deploy repository changes:
+
+1. Check **Settings → Builds** for the connected repository and production branch (usually `main`).
+2. Commit and push your changes to that branch, or merge a pull request into it. Local edits and local commits alone are not visible to Cloudflare. If Cloudflare is connected to your fork, first sync or merge the upstream changes into that fork's deployment branch.
+3. Cloudflare automatically starts a new build using the pushed commit. Open **Deployments → Go to build history**, confirm the expected commit is being built, and wait for successful deployment. See [production branch builds](https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/).
+
+Use **Retry build** to rerun a selected build after a temporary failure or a change to its Cloudflare build settings. A retry is tied to that build's source revision; it is not a way to publish local edits or sync a fork with upstream. Retry the build for the commit you intend to deploy. Cloudflare documents [retries for a commit](https://developers.cloudflare.com/changelog/post/2025-03-17-rerun-build/) and [using current build settings on retry](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
 
 The final deployment command applies outstanding migrations and keeps the active runtime settings. If changing those settings, save and **Promote version** before the build. Run a disposable task after each upgrade. Ordinary upgrades must not recreate D1, reset tasks, or regenerate either application secret.
 

@@ -221,8 +221,17 @@ class TaskClient:
         return self._request(pending.endpoint, pending.body, pending)
 
     def claim(self, count: int = 1, *, filter: str = "", lease_seconds: int | None = None,
+              sort: list[tuple[str, str]] | None = None,
               request_id: str | None = None, request_created_at: str | None = None) -> list["Task"]:
         content: dict[str, Any] = {"count": count, "filter": filter}
+        if sort is not None:
+            if len(sort) > 8 or any(not isinstance(item, (tuple, list)) or len(item) != 2
+                                    or not isinstance(item[0], str) or not item[0]
+                                    or item[1] not in ("asc", "desc") for item in sort):
+                raise ValueError("sort requires at most eight (field, asc/desc) pairs")
+            if len({field.lower() for field, _ in sort}) != len(sort):
+                raise ValueError("Duplicate sort field")
+            content["sorts"] = [{"field": field, "direction": direction} for field, direction in sort]
         if lease_seconds is not None:
             content["lease_seconds"] = lease_seconds
         prepared = self.prepare("claim", content, request_id=request_id, request_created_at=request_created_at)
