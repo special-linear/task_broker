@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Python `TaskClient.complete_many()` completes task/result pairs in batches of at most 20, with per-item outcomes, optional runtimes, and resumable progress that can be saved across restarts. Uses the existing server report API.
 - Full reset restores fresh claim priority using current profile attempt counters, so reset tasks follow the worker's requested sort alongside untouched tasks. Lifetime history and lease fencing remain intact; soft resets retain retry priority. Also applies to tasks reset before this update, without a new migration.
 - New result columns default to the matching object property (for example, `/diameter`); the editor shows the mapping and explains that a blank pointer selects the whole result. Existing explicit mappings are preserved.
 - Report and renewal validation errors preserve the invalid field or result-column reason, including on replay, so Python exceptions explain what needs correcting.

@@ -21,6 +21,71 @@ Task methods are `complete(result, runtime=None)`, `release(note=None, details=N
 
 Runtime is measured with a monotonic clock from receipt/recovery, not wall-clock timestamps. An explicit completion runtime overrides that measurement. Recovery marks the runtime origin as recovered.
 
+## Batched completion
+
+`client.complete_many(completions)` accepts a finite iterable of `(task, result)` pairs or `(task, result, runtime)` triples. It creates the lease identities and item/request IDs for you and sends the results through the existing report API. No server upgrade is required.
+
+```python
+from task_pool import TaskClient
+
+client = TaskClient.from_env("family/profile", worker_id="stable-job-name")
+tasks = client.claim(20)
+completions = [
+    (task, {"diameter": int(task.data["n"]) ** 2})
+    for task in tasks
+]
+outcomes = client.complete_many(completions)
+
+for outcome in outcomes:
+    if outcome["status"] == "rejected":
+        print(outcome["task_id"], outcome["error"]["code"], outcome["error"]["message"])
+    else:
+        print(outcome["task_id"], outcome["status"])
+```
+
+All tasks must belong to that same `TaskClient` instance, including tasks reconstructed with its `task_from_handle()`. Duplicate task IDs or attempts are rejected before any request is sent. Resolve an individual task's pending operation before including it. An empty iterable returns `[]` without sending a request when there is no pending batch.
+
+The client materializes and prepares the entire iterable before sending. It divides submissions into sequential requests with at most 20 items and at most 512 KiB each; a single item that cannot fit is rejected locally. The server's separate 16 KiB result limit and issued result contracts still apply. Each returned item corresponds to the input at the same position. `applied` and `already_applied` are successful outcomes. Per-item `rejected` outcomes are returned without raising, and later batches still run. Correct rejected results and submit those tasks again as a new operation. A request-level error stops subsequent batches; earlier acknowledged batches remain committed.
+
+Without an explicit runtime, elapsed time is captured from each task's receipt/recovery when the collection is prepared. This includes time spent computing other tasks or buffering results before the call. To record only the computation time, measure it yourself and append `(task, result, elapsed_seconds)` instead. Explicit runtimes must be finite and nonnegative; `0` is valid and `None` uses the default measurement. `complete_many()` submits immediately; it does not add a background queue or heartbeat. Submit or renew before leases expire.
+
+### Retrying and restoring completion batches
+
+After a request error, `client.pending_completions` retains the prepared requests, the index of the first unacknowledged batch (`next_batch`), and earlier per-item outcomes (`results`). Call `client.retry_completions()` to resume, or call `complete_many()` again with the same tasks, results, runtime overrides, and order. A generator must be recreated or materialized if it has already been consumed. Retries skip acknowledged batches and preserve the remaining requests' exact bytes, IDs, timestamps, and measured runtimes.
+
+Resolve the pending collection before submitting different completions. Individual `complete()`, `release()`, and `fail()` calls for tasks in unacknowledged batches are blocked until it is resolved; explicit renewals remain available. If another request error occurs while resuming, the collection remains available for a later retry. Authentication, validation, and quota errors are not automatically retried indefinitely.
+
+For recovery after a process restart, save the whole collection after an error:
+
+```python
+import json
+from task_pool import TaskError
+
+try:
+    outcomes = client.complete_many(completions)
+except TaskError:
+    if client.pending_completions is not None:
+        # Contains lease credentials and results; use a private local file.
+        with open("private-completions.json", "w", encoding="utf-8") as handle:
+            json.dump(client.pending_completions.to_dict(), handle)
+    raise
+```
+
+In the restarted process, recreate the client with the same broker URL, family key, worker ID, and profile route:
+
+```python
+import json
+from task_pool import PendingCompletions, TaskClient
+
+client = TaskClient.from_env("family/profile", worker_id="stable-job-name")
+with open("private-completions.json", encoding="utf-8") as handle:
+    pending = PendingCompletions.from_dict(json.load(handle))
+outcomes = client.retry_completions(pending)
+# Inspect every outcome as in the first example, then retire the saved file.
+```
+
+If resuming fails again, save the updated `client.pending_completions` before exiting. Progress is kept in memory until you explicitly save it. Task handles alone do not contain the collection's progress. An `UncertainOperation.operation` describes only the interrupted HTTP request; use `retry_completions()` for this workflow so later batches and earlier outcomes are included. The lower-level `client.report(items)` and `client.retry(pending_operation)` remain available for callers managing their own raw batches.
+
 ## Validation errors
 
 When `complete()`, `release()`, `fail()` or `renew()` raises `ValidationError`, its message identifies the invalid field or result column. For example, `Diameter must be text.` means the issued result contract expects a string, while `runtime_seconds: ... expected number ...` identifies malformed runtime metadata. Inspect `error.code` and `str(error)` when catching the exception. Older server versions return only `Correct the malformed item fields.`; deploy the updated Worker to obtain specific messages for new requests.

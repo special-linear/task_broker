@@ -18,7 +18,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable
 
 
@@ -116,6 +116,32 @@ class PendingOperation:
         return cls(value["endpoint"], _encode(value["body"]), value["fingerprint"])
 
 
+@dataclass
+class PendingCompletions:
+    """Prepared completion requests and acknowledged progress; contains lease tokens."""
+    fingerprint: str
+    operations: list[PendingOperation]
+    next_batch: int = 0
+    results: list[dict[str, Any]] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"fingerprint": self.fingerprint,
+                "operations": [operation.to_dict() for operation in self.operations],
+                "next_batch": self.next_batch, "results": json.loads(_encode(self.results))}
+
+    @classmethod
+    def from_dict(cls, value: dict[str, Any]) -> "PendingCompletions":
+        pending = cls(value["fingerprint"],
+                      [PendingOperation.from_dict(item) for item in value["operations"]],
+                      value["next_batch"], json.loads(_encode(value["results"])))
+        if (not isinstance(pending.next_batch, int)
+                or not 0 <= pending.next_batch <= len(pending.operations)
+                or len(pending.results) != sum(len(json.loads(op.body)["items"])
+                                               for op in pending.operations[:pending.next_batch])):
+            raise ValueError("Invalid completion batch progress")
+        return pending
+
+
 class TaskClient:
     def __init__(self, pool: str, url: str | None = None, key: str | None = None,
                  worker_id: str | None = None, *, timeout: float = 15,
@@ -139,6 +165,7 @@ class TaskClient:
         self.allow_nonzero_rank = allow_nonzero_rank
         self.pending_claim: PendingOperation | None = None
         self.last_claim: dict[str, Any] | None = None
+        self.pending_completions: PendingCompletions | None = None
 
     @classmethod
     def from_env(cls, pool: str, **overrides: Any) -> "TaskClient":
@@ -267,6 +294,95 @@ class TaskClient:
     def report(self, items: list[dict[str, Any]], **identity: Any) -> dict[str, Any]:
         return self.retry(self.prepare("report", {"items": items}, **identity))
 
+    def complete_many(
+        self, completions: Iterable[tuple["Task", Any] | tuple["Task", Any, float | None]],
+    ) -> list[dict[str, Any]]:
+        """Complete (task, result[, runtime]) entries in order, at most 20 per request.
+
+        Returns per-item outcomes, including rejections. On a request error, retain
+        pending_completions and call retry_completions(), or repeat unchanged input.
+        The entire iterable is prepared before sending; runtimes default to elapsed
+        time since each task was received/recovered at preparation time.
+        """
+        self._rank_guard()
+        entries = []
+        identities = []
+        task_ids, attempt_ids = set(), set()
+        for entry in completions:
+            if not isinstance(entry, (tuple, list)) or len(entry) not in (2, 3):
+                raise ValueError("Use (task, result) or (task, result, runtime) entries")
+            task, result = entry[:2]
+            runtime = entry[2] if len(entry) == 3 else None
+            if not isinstance(task, Task) or task.client is not self:
+                raise ValueError("Every task must belong to this TaskClient instance")
+            if task.pending is not None:
+                raise UncertainOperation(task.pending, "Resolve the task's pending operation before batching it")
+            identity = task._identity()
+            if identity["task_id"] in task_ids or identity["attempt_id"] in attempt_ids:
+                raise ValueError("Duplicate task or attempt in completions")
+            task_ids.add(identity["task_id"])
+            attempt_ids.add(identity["attempt_id"])
+            if runtime is not None and (not math.isfinite(runtime) or runtime < 0):
+                raise ValueError("Runtime must be finite and nonnegative")
+            result = _safe(result)
+            entries.append((task, result, runtime))
+            identities.append({**identity, "result": result, "runtime_override": runtime})
+        fingerprint = hashlib.sha256(_encode(identities)).hexdigest()
+        if self.pending_completions is not None:
+            if self.pending_completions.fingerprint != fingerprint:
+                raise ConflictError("PENDING_COMPLETIONS",
+                                    "Resolve pending completions with retry_completions() before changing the batch", 409)
+            return self.retry_completions()
+        if not entries:
+            return []
+
+        items = [task._make_item("report", {"outcome": "success", "result": result}, runtime)
+                 for task, result, runtime in entries]
+        operations = []
+        start = 0
+        while start < len(items):
+            chunk = items[start:start + 20]
+            operation = self.prepare("report", {"items": chunk})
+            while len(operation.body) > 512 * 1024 and len(chunk) > 1:
+                chunk = chunk[:max(1, len(chunk) // 2)]
+                operation = self.prepare("report", {"items": chunk})
+            if len(operation.body) > 512 * 1024:
+                raise ValueError("A completion item exceeds the 512 KiB request limit")
+            operations.append(operation)
+            start += len(chunk)
+        self.pending_completions = PendingCompletions(fingerprint, operations)
+        return self.retry_completions()
+
+    def retry_completions(self, pending: PendingCompletions | None = None) -> list[dict[str, Any]]:
+        """Resume prepared completions, skipping acknowledged batches; also accepts restored state."""
+        self._rank_guard()
+        if pending is None:
+            pending = self.pending_completions
+        if pending is None:
+            raise ValueError("No pending completions to retry")
+        if self.pending_completions is not None and self.pending_completions is not pending:
+            raise ConflictError("PENDING_COMPLETIONS", "Resolve the current completion batch first", 409)
+        for operation in pending.operations:
+            body = json.loads(operation.body)
+            if (operation.endpoint != "report" or body["pool"] != self.pool
+                    or body["worker_id"] != self.worker_id):
+                raise ValueError("Restore completions with the same pool and worker identity")
+        self.pending_completions = pending
+        while pending.next_batch < len(pending.operations):
+            operation = pending.operations[pending.next_batch]
+            data = self.retry(operation)
+            results = data.get("items") if isinstance(data, dict) else None
+            expected = json.loads(operation.body)["items"]
+            if (not isinstance(results, list) or len(results) != len(expected)
+                    or any(not isinstance(result, dict) or result.get("item_id") != item["item_id"]
+                           or result.get("status") not in ("applied", "already_applied", "rejected")
+                           for result, item in zip(results, expected))):
+                raise UncertainOperation(operation, "Incomplete or mismatched batch response; retry the same completions")
+            pending.results.extend(results)
+            pending.next_batch += 1
+        self.pending_completions = None
+        return list(pending.results)
+
     def renew(self, items: list[dict[str, Any]], **identity: Any) -> dict[str, Any]:
         return self.retry(self.prepare("renew", {"items": items}, **identity))
 
@@ -323,16 +439,25 @@ class Task:
         return {key: self._handle[key] for key in
                 ("task_id", "attempt_id", "lease_token", "lease_generation", "instance_epoch")}
 
+    def _make_item(self, endpoint: str, content: dict[str, Any], runtime: float | None = None) -> dict[str, Any]:
+        item = {**self._identity(), "item_id": str(uuid.uuid4()), **content}
+        if endpoint == "report":
+            measured = time.monotonic() - self.received_at if runtime is None else runtime
+            if not math.isfinite(measured) or measured < 0:
+                raise ValueError("Runtime must be finite and nonnegative")
+            item.update(runtime_seconds=measured,
+                        runtime_origin=self.runtime_origin if runtime is None else "explicit")
+        return item
+
     def _mutate(self, endpoint: str, content: dict[str, Any], runtime: float | None = None) -> dict[str, Any]:
+        batch = self.client.pending_completions
+        if endpoint == "report" and batch is not None and any(item["attempt_id"] == self.attempt_id
+                                     for op in batch.operations[batch.next_batch:]
+                                     for item in json.loads(op.body)["items"]):
+            raise ConflictError("PENDING_COMPLETIONS", "Resolve this task's batch with client.retry_completions() first", 409)
         semantic = _encode({"endpoint": endpoint, **content, "runtime_override": runtime})
         if self.pending is None or self._pending_semantic != semantic:
-            item = {**self._identity(), "item_id": str(uuid.uuid4()), **content}
-            if endpoint == "report":
-                measured = time.monotonic() - self.received_at if runtime is None else runtime
-                if not math.isfinite(measured) or measured < 0:
-                    raise ValueError("Runtime must be finite and nonnegative")
-                item.update(runtime_seconds=measured,
-                            runtime_origin=self.runtime_origin if runtime is None else "explicit")
+            item = self._make_item(endpoint, content, runtime)
             self.pending = self.client.prepare(endpoint, {"items": [item]})
             self._pending_semantic = semantic
         data = self.client.retry(self.pending)
