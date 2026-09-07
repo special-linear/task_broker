@@ -67,9 +67,10 @@ export function errorBox(error: unknown) {
     );
   return box;
 }
-export function dialog(title: string, narrow = false) {
+export function dialog(title: string, narrow = false, trackChanges = true) {
   const d = el("dialog", { class: narrow ? "narrow" : "" }),
-    content = el("div");
+    content = el("div", { class: "dialog-content" });
+  let changeVersion = 0;
   const close = button("Close", () => {
     if (!d.dataset.dirty || confirm("Discard the unsaved changes in this form?")) d.close();
   });
@@ -80,14 +81,27 @@ export function dialog(title: string, narrow = false) {
   document.body.append(d);
   d.addEventListener("close", () => d.remove());
   d.addEventListener("input", () => {
-    d.dataset.dirty = "true";
+    if (trackChanges) {
+      changeVersion++;
+      d.dataset.dirty = "true";
+    }
   });
   d.addEventListener("cancel", (event) => {
     if (d.dataset.dirty && !confirm("Discard the unsaved changes in this form?"))
       event.preventDefault();
   });
   d.showModal();
-  return { dialog: d, content };
+  return {
+    dialog: d,
+    content,
+    // Capture before an async save so newer edits still prompt on close.
+    savedChanges: () => {
+      const version = changeVersion;
+      return () => {
+        if (version === changeVersion) delete d.dataset.dirty;
+      };
+    },
+  };
 }
 window.addEventListener("beforeunload", (event) => {
   if (document.querySelector('dialog[data-dirty="true"]')) {
@@ -96,6 +110,8 @@ window.addEventListener("beforeunload", (event) => {
   }
 });
 export function labeled(name: string, input: HTMLElement) {
+  if (input instanceof HTMLInputElement && ["checkbox", "radio"].includes(input.type))
+    return el("label", { class: "choice-label" }, input, el("span", {}, name));
   return el("label", {}, name, input);
 }
 export function select(options: { value: string; label: string }[], value?: string) {

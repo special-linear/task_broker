@@ -96,6 +96,15 @@ label {
   font-size: 13px;
   color: #405d4c;
 }
+.choice-label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.choice-label > input {
+  flex: 0 0 auto;
+  margin: 0;
+}
 a {
   color: var(--green);
 }
@@ -391,11 +400,21 @@ small {
 dialog {
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 26px;
+  padding: 0;
   max-width: 900px;
   width: calc(100% - 40px);
   max-height: 90vh;
+  overflow: hidden;
   box-shadow: 0 20px 90px #17332330;
+}
+dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.dialog-content {
+  min-height: 0;
+  overflow: auto;
+  padding: 0 26px 26px;
 }
 dialog::backdrop {
   background: #14282065;
@@ -403,13 +422,16 @@ dialog::backdrop {
 dialog.narrow {
   max-width: 570px;
 }
-dialog header {
+dialog > header {
   display: flex;
+  flex: 0 0 auto;
+  padding: 26px 26px 12px;
   justify-content: space-between;
   gap: 20px;
   align-items: start;
 }
-dialog header button {
+dialog > header button {
+  flex-shrink: 0;
   padding: 3px 9px;
 }
 pre {

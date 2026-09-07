@@ -2,6 +2,7 @@ import {
   TabulatorFull as Tabulator,
   type CellComponent,
   type ColumnDefinition,
+  type RowComponent,
 } from "tabulator-tables";
 import { parseJSON, type Field } from "../shared/core";
 import type { TaskRow } from "../shared/contracts";
@@ -48,8 +49,9 @@ export class TaskGrid {
   editingId: string | null = null;
   private suppress = false;
   private pasteCell: CellComponent | null = null;
+  private selectionAnchor: string | null = null;
   constructor(
-    container: HTMLElement,
+    private container: HTMLElement,
     fields: Field[],
     rows: TaskRow[],
     private onEdit: (row: TaskRow, key: string, value: unknown) => void,
@@ -77,12 +79,24 @@ export class TaskGrid {
     const columns: ColumnDefinition[] = [
       {
         title: "",
-        formatter: "rowSelection",
+        formatter: (cell) => {
+          const row = cell.getRow();
+          return el("input", {
+            type: "checkbox",
+            class: "task-row-select",
+            "aria-label": "Select Row",
+            checked: row.isSelected(),
+            onclick: (event: MouseEvent) => {
+              event.stopPropagation();
+              this.selectClickedRow(event, row);
+              (event.currentTarget as HTMLInputElement).checked = row.isSelected();
+            },
+          });
+        },
         titleFormatter: "rowSelection",
         headerSort: false,
         hozAlign: "center",
         width: 42,
-        cellClick: (_e, cell) => cell.getRow().toggleSelect(),
       },
       col("Task ID", "task_id", { frozen: true, minWidth: 150 }),
       col("Enabled", "enabled", {
@@ -140,7 +154,7 @@ export class TaskGrid {
       index: "task_uid",
       nestedFieldSeparator: false,
       movableColumns: true,
-      selectableRows: true,
+      selectableRows: "highlight",
       columns,
       data: rows.map((r) => this.flatten(r, fields)),
       placeholder: "No tasks match this view.",
@@ -150,6 +164,11 @@ export class TaskGrid {
     });
     this.ready = new Promise((resolve) => this.table.on("tableBuilt", resolve));
     container.tabIndex = 0;
+    this.table.on("rowClick", (event: UIEvent, row: RowComponent) => {
+      if (this.editing || (event.target as Element).closest("input, textarea, select, button, a"))
+        return;
+      this.selectClickedRow(event as MouseEvent, row);
+    });
     this.table.on("cellClick", (_event: Event, cell: CellComponent) => {
       this.pasteCell = cell;
     });
@@ -209,7 +228,25 @@ export class TaskGrid {
       }
       this.onEditingDone();
     });
-    this.table.on("rowSelectionChanged", (data) => onSelect(data.length));
+    this.table.on("rowSelectionChanged", (data, _rows, selected, deselected) => {
+      for (const row of [...selected, ...deselected]) {
+        const checkbox = row.getElement().querySelector<HTMLInputElement>("input.task-row-select");
+        if (checkbox) checkbox.checked = row.isSelected();
+      }
+      onSelect(data.length);
+    });
+  }
+  private selectClickedRow(event: MouseEvent, row: RowComponent) {
+    const id = row.getData().task_uid;
+    const rows = this.table.getRows("active");
+    const anchor = rows.findIndex((r) => r.getData().task_uid === this.selectionAnchor);
+    if (event.shiftKey && anchor >= 0) {
+      const end = rows.indexOf(row);
+      this.table.selectRow(rows.slice(Math.min(anchor, end), Math.max(anchor, end) + 1));
+      window.getSelection()?.removeAllRanges();
+    } else row.toggleSelect();
+    if (row.isSelected()) this.selectionAnchor = id;
+    else if (this.selectionAnchor === id) this.selectionAnchor = null;
   }
   private flatten(r: TaskRow, fields: Field[]) {
     return {
@@ -225,28 +262,55 @@ export class TaskGrid {
     };
   }
   async update(row: TaskRow, fields: Field[]) {
-    this.suppress = true;
-    try {
-      await this.table.updateData([this.flatten(row, fields)]);
-    } finally {
-      this.suppress = false;
-    }
+    await this.updateRows([row], fields);
   }
   async updateRows(rows: TaskRow[], fields: Field[]) {
+    if (!rows.length) return;
+    const viewport = this.viewport();
     this.suppress = true;
     try {
       await this.table.updateData(rows.map((r) => this.flatten(r, fields)));
     } finally {
       this.suppress = false;
+      this.restoreViewport(viewport);
     }
   }
   async appendRows(rows: TaskRow[], fields: Field[]) {
     await this.table.addData(rows.map((r) => this.flatten(r, fields)));
   }
   async replaceRows(rows: TaskRow[], fields: Field[]) {
+    const current = this.table.getData();
+    if (
+      current.length === rows.length &&
+      current.every((r, i) => r.task_uid === rows[i].task_uid)
+    ) {
+      await this.updateRows(
+        rows.filter(
+          (r, i) => JSON.stringify(this.flatten(r, fields)) !== JSON.stringify(current[i]),
+        ),
+        fields,
+      );
+      return;
+    }
+    const viewport = this.viewport();
     const selected = this.selected().map((r) => r.task_uid);
+    const ids = new Set(rows.map((r) => r.task_uid));
     await this.table.replaceData(rows.map((r) => this.flatten(r, fields)));
-    this.table.selectRow(selected.filter((id) => rows.some((r) => r.task_uid === id)));
+    this.table.selectRow(selected.filter((id) => ids.has(id)));
+    if (this.selectionAnchor && !ids.has(this.selectionAnchor)) this.selectionAnchor = null;
+    this.pasteCell = null;
+    this.restoreViewport(viewport);
+  }
+  viewport() {
+    const holder = this.container.querySelector<HTMLElement>(".tabulator-tableholder");
+    return { top: holder?.scrollTop ?? 0, left: holder?.scrollLeft ?? 0 };
+  }
+  restoreViewport(viewport: { top: number; left: number }) {
+    const holder = this.container.querySelector<HTMLElement>(".tabulator-tableholder");
+    if (holder) {
+      holder.scrollTop = viewport.top;
+      holder.scrollLeft = viewport.left;
+    }
   }
   setSorts(sorts: SortSpec) {
     this.sorts = sorts;

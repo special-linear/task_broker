@@ -28,11 +28,15 @@ Create tasks with the accessible form or import a table. Task IDs are generated 
 
 Double-click an ordinary grid cell to edit it. Enter/Tab commits and saves; Escape cancels the active editor. Ordinary cells save immediately. Paste/import and reviewed bulk actions require explicit Save/Apply. Select loaded rows with the selection column; an operation can alternatively freeze **all matching rows**, including other pages. Page sizes are 50, 100, 250 and **All rows**.
 
+Hold Shift while clicking a row or its checkbox to select every loaded row between it and the last selected row, following the current sort order. Existing selections outside the range stay selected. A regular click toggles one row.
+
 An attempted value stays local if the network fails. A conflict displays the current server row alongside the attempted change. Retry unchanged uncertain operations to reuse their original request identity. Applying a draft against a newer revision is an explicit conflict-resolution action. Input edits on a leased task require **Revoke and edit**. Input edits on completed work require **Reset and edit**. Notes and enabled flags can change without a worker renewal causing an unrelated input conflict.
 
 Leases belong to a physical task, so profiles sharing a pool cannot run the same physical task simultaneously. Success closes it globally. Permanent failure closes only the issuing profile. Release consumes and retains that attempt. A full reset clears current counters in its scope and returns those tasks to the fresh claim group, ordered alongside untouched tasks by the worker's requested sort. An all-profile full reset also clears global completion and result presentation. Lifetime sequences, identifiers and immutable history remain intact. Soft resets retain attempt counters and retry priority. A profile reset cannot erase a global success.
 
 Live refresh is off by default. When enabled, it polls every ten seconds only while the page is visible, attended, has pending/running work, and has no obstructing modal/editor. It stops after 15 minutes without user activity. Manual Refresh resumes attendance. No scheduled scan is needed for lease expiry or after inactivity.
+
+Refresh and updates after bulk actions preserve the table's vertical and horizontal scroll position and retain selections for rows still present. Refreshing an existing **All rows** view keeps the current table visible until every refreshed page arrives. Cancelling or retrying that refresh leaves the current table visible.
 
 ## Sorting and All rows
 

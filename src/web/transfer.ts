@@ -230,6 +230,7 @@ export function importDialog(
             "Save reviewed import",
             async () => {
               if (!stagedId) throw new Error("Validate the complete import first.");
+              const markSaved = d.savedChanges();
               let done = 0;
               const failures: any[] = [];
               while (true) {
@@ -252,6 +253,7 @@ export function importDialog(
               }
               if (failures.length)
                 download("import-save-errors.csv", [Papa.unparse(failures)], "text/csv");
+              else markSaved();
               toast("Import finished. Committed rows are available in the task table.");
               await refresh();
             },
@@ -279,7 +281,7 @@ export function exportDialog(
   selected: TaskRow[],
   sorts: SortSpec = defaultSorts(),
 ) {
-  const d = dialog("Export tasks", true),
+  const d = dialog("Export tasks", true, false),
     selection = select([
       { value: "view", label: "All rows matching the current view" },
       { value: "all", label: "All tasks in this pool" },
@@ -504,6 +506,7 @@ export function portableImport() {
         button(
           "Import verified records",
           async () => {
+            const markSaved = d.savedChanges();
             let id = localStorage.getItem(storageKey),
               processed = 0;
             if (id) {
@@ -511,6 +514,7 @@ export function portableImport() {
               processed = existing.processed;
               if (existing.status === "complete") {
                 status.textContent = "This file has already been imported.";
+                markSaved();
                 return;
               }
             } else {
@@ -543,7 +547,7 @@ export function portableImport() {
             if (processed === records.length) {
               status.textContent =
                 "Import complete. Review configuration, issue new family keys and test disposable work before enabling pools.";
-              d.dialog.dataset.dirty = "";
+              markSaved();
             }
           },
           "danger",

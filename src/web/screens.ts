@@ -1386,12 +1386,15 @@ async function claimSortIndexes(pool: any) {
       "Save index definition",
       async () => {
         if (!rows.length) throw new Error("Choose at least one sort field.");
+        const markSaved = d.savedChanges();
+        const savedName = name.value;
         await api(`/pools/${pool.id}/claim-sort-indexes`, {
           ...operation(),
-          name: name.value,
+          name: savedName,
           sorts: rows.map((r) => ({ field: r.field.value, direction: r.direction.value })),
         });
-        name.value = "";
+        if (name.value === savedName) name.value = "";
+        markSaved();
         await refresh();
       },
       "primary",

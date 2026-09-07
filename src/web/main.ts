@@ -522,6 +522,7 @@ let allIdentity = "",
   allCursor: string | null = null,
   allComplete = false,
   allCount = 0;
+let renderedIdentity = "";
 let deferredReload = false;
 let deferredSorts: SortSpec | null = null;
 const viewIdentity = () =>
@@ -594,6 +595,7 @@ async function changeSorts(sorts: SortSpec) {
     state.rows.sort(taskComparator(sorts, state.fields));
     await state.grid?.replaceRows(state.rows, state.fields);
     if (generation !== loadGeneration) return;
+    renderedIdentity = allIdentity;
     renderSorts();
     updateLoadControls();
   } else await loadPage();
@@ -668,6 +670,8 @@ async function loadPage(resume = false) {
   loadController = controller;
   let cursor = all && resume && allIdentity === identity ? allCursor : all ? null : state.cursor;
   const continuing = all && resume && allIdentity === identity && state.rows.length > 0 && !!cursor;
+  // Refresh an existing All view atomically; partial pages must not shrink its viewport.
+  const refreshingAll = all && !!state.grid && renderedIdentity === identity;
   if (all) {
     if (!continuing) {
       allCursor = null;
@@ -682,8 +686,6 @@ async function loadPage(resume = false) {
   try {
     if (all && !continuing) {
       state.rows = [];
-      if (state.grid) await state.grid.replaceRows([], state.fields);
-      if (controller.signal.aborted || generation !== loadGeneration) return;
     }
     updateLoadControls();
     do {
@@ -706,27 +708,33 @@ async function loadPage(resume = false) {
         deferredReload = true;
         return;
       }
-      const sameFields = JSON.stringify(state.fields) === JSON.stringify(result.fields);
-      if (!sameFields && state.grid) {
-        columns = state.grid.columns();
-        state.grid.destroy();
-        state.grid = null;
-      }
-      const restoreColumns = !state.grid;
-      state.fields = result.fields;
       if (first || !all) state.rows = result.rows;
       else {
         const seen = new Set(state.rows.map((r) => r.task_uid));
         result.rows = result.rows.filter((r: TaskRow) => !seen.has(r.task_uid));
         state.rows.push(...result.rows);
       }
-      await renderTaskRows(!first && all ? result.rows : null);
-      if (controller.signal.aborted || generation !== loadGeneration) return;
-      if (restoreColumns && columns) state.grid?.applyColumns(columns);
-      const loadedIds = new Set(state.rows.map((r) => r.task_uid));
-      state.grid?.table.selectRow(selected.filter((id) => loadedIds.has(id)));
-      // Restore each prior selection once; later pages must respect new deselections.
-      selected = selected.filter((id) => !loadedIds.has(id));
+      if (!refreshingAll || !result.cursor) {
+        const sameFields = JSON.stringify(state.fields) === JSON.stringify(result.fields);
+        const viewport = state.grid?.viewport();
+        if (!sameFields && state.grid) {
+          columns = state.grid.columns();
+          selected = state.grid.selected().map((r) => r.task_uid);
+          state.grid.destroy();
+          state.grid = null;
+        }
+        const restoreColumns = !state.grid;
+        state.fields = result.fields;
+        await renderTaskRows(!refreshingAll && !first && all ? result.rows : null);
+        if (controller.signal.aborted || generation !== loadGeneration) return;
+        if (restoreColumns) {
+          if (columns) state.grid?.applyColumns(columns);
+          if (viewport) state.grid?.restoreViewport(viewport);
+          const loadedIds = new Set(state.rows.map((r) => r.task_uid));
+          state.grid?.table.selectRow(selected.filter((id) => loadedIds.has(id)));
+        }
+        renderedIdentity = identity;
+      }
       state.next = result.cursor;
       state.lastUpdated = new Date().toLocaleTimeString();
       status.textContent = `${result.total.toLocaleString()} tasks · updated ${state.lastUpdated}`;
@@ -1473,7 +1481,7 @@ async function downloadOperationErrors(id: string) {
   download("operation-errors.ndjson", parts, "application/x-ndjson");
 }
 function columnDialog() {
-  const d = dialog("Visible columns", true);
+  const d = dialog("Visible columns", true, false);
   for (const column of state.grid?.table.getColumns() ?? []) {
     if (!column.getField()) continue;
     const input = el("input", {
